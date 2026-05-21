@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { GoogleMap, HeatmapLayer, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Circle, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { useAlerts } from "../alerts/AlertProvider";
 import { MOCK_RISK_ZONES } from "../../data/mockData";
 import { useTheme } from "../../context/ThemeContext";
 
 const MAP_CENTER = { lat: 5.69188, lng: -76.65835 };
-const LIBRARIES: ("visualization")[] = ["visualization"];
 
 const DARK_STYLES: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#0a121e" }] },
@@ -24,7 +23,11 @@ const LIGHT_STYLES: google.maps.MapTypeStyle[] = [
   { featureType: "poi", elementType: "geometry", stylers: [{ color: "#e8f0e8" }] },
 ];
 
-const safeParse = (v?: string): number => parseFloat((v ?? "0").replace(",", ".")) || 0;
+function getZoneColor(weight: number) {
+  if (weight > 0.8) return { fill: "#ef4444", stroke: "#991b1b", label: "Alto" };
+  if (weight > 0.6) return { fill: "#f59e0b", stroke: "#92400e", label: "Medio" };
+  return { fill: "#22c55e", stroke: "#166534", label: "Bajo" };
+}
 
 export const EmergencyMap = () => {
   const { theme } = useTheme();
@@ -33,15 +36,8 @@ export const EmergencyMap = () => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBpdGMOFY0hGtNuG85onypJTTKNWWU2vwY",
-    libraries: LIBRARIES,
-  });
-
-  const heatmapPoints = isLoaded
-    ? MOCK_RISK_ZONES.map(
-        (z) => ({ location: new google.maps.LatLng(z.lat, z.lng), weight: z.weight })
-      )
-    : [];
+      googleMapsApiKey: import.meta.env.VITE_API_KEYS_MAPS,
+    });
 
   const criticalAlerts = activeAlerts.filter(a => a.type === "critical");
 
@@ -79,36 +75,43 @@ export const EmergencyMap = () => {
         }}
         onLoad={onLoad}
       >
-        <HeatmapLayer
-          data={heatmapPoints}
-          options={{
-            radius: 60,
-            opacity: 0.5,
-            dissipating: true,
-            gradient: [
-              "rgba(34,197,94,0)",
-              "rgba(132,204,22,0.4)",
-              "rgba(250,204,21,0.6)",
-              "rgba(251,146,60,0.8)",
-              "rgba(239,68,68,1)",
-            ],
-          }}
-        />
-        {MOCK_RISK_ZONES.map((z, i) => (
-          <Marker
-            key={i}
-            position={{ lat: z.lat, lng: z.lng }}
-            icon={{
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: Math.max(6, z.weight * 12),
-              fillColor: z.weight > 0.8 ? "#ef4444" : z.weight > 0.6 ? "#f59e0b" : "#22c55e",
-              fillOpacity: 0.6,
-              strokeColor: "#ffffff",
-              strokeWeight: 1,
-            }}
-            title={z.label}
-          />
-        ))}
+        {MOCK_RISK_ZONES.map((z, i) => {
+          const colors = getZoneColor(z.weight);
+          return (
+            <Circle
+              key={`circle-${i}`}
+              center={{ lat: z.lat, lng: z.lng }}
+              radius={z.weight * 4000}
+              options={{
+                fillColor: colors.fill,
+                fillOpacity: 0.12 + z.weight * 0.18,
+                strokeColor: colors.fill,
+                strokeOpacity: 0.5,
+                strokeWeight: 1.5,
+                clickable: false,
+              }}
+            />
+          );
+        })}
+        {MOCK_RISK_ZONES.map((z, i) => {
+          const colors = getZoneColor(z.weight);
+          const scale = Math.max(7, z.weight * 14);
+          return (
+            <Marker
+              key={`marker-${i}`}
+              position={{ lat: z.lat, lng: z.lng }}
+              icon={{
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale,
+                fillColor: colors.fill,
+                fillOpacity: 0.7,
+                strokeColor: "#ffffff",
+                strokeWeight: 2,
+              }}
+              title={`${z.label} — ${colors.label}`}
+            />
+          );
+        })}
       </GoogleMap>
 
       <div className="absolute top-3 left-3 z-10 bg-black/70 backdrop-blur-md text-white text-xs font-mono px-3 py-1.5 rounded-lg border border-white/10">

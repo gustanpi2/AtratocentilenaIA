@@ -1,6 +1,5 @@
 import PageMeta from "../../components/common/PageMeta";
-import { GoogleMapComponent } from "./GoogleMapComponent";
-
+import GoogleMapComponent from "./GoogleMapComponent";
 
 export default function Maps() {
   return (
