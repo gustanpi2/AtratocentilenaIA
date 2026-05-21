@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MRV Río Atrato — Technical Documentation</title>
+<style>
+  @page { size: A4; margin: 2.5cm; }
+  body {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 30px;
+  }
+  h1 { font-size: 24pt; color: #0d47a1; border-bottom: 3px solid #0d47a1; padding-bottom: 8px; margin-top: 30px; }
+  h2 { font-size: 18pt; color: #1565c0; border-bottom: 2px solid #bbdefb; padding-bottom: 5px; margin-top: 25px; }
+  h3 { font-size: 14pt; color: #1976d2; margin-top: 20px; }
+  h4 { font-size: 12pt; color: #1e88e5; margin-top: 15px; }
+  p { margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10pt; }
+  th { background-color: #0d47a1; color: white; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { padding: 6px 10px; border: 1px solid #ddd; }
+  tr:nth-child(even) { background-color: #f5f9ff; }
+  tr:hover { background-color: #e3f2fd; }
+  code { background-color: #e8eaf6; padding: 2px 6px; border-radius: 3px; font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; }
+  pre { background-color: #f5f5f5; border: 1px solid #ddd; border-left: 4px solid #0d47a1; padding: 12px 16px; overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 9pt; border-radius: 4px; margin: 10px 0; }
+  blockquote { border-left: 4px solid #0d47a1; margin: 12px 0; padding: 8px 16px; background: #f5f9ff; }
+  ul { padding-left: 20px; }
+  li { margin: 4px 0; }
+  hr { border: none; border-top: 2px solid #bbdefb; margin: 25px 0; }
+  .toc { background: #f5f9ff; padding: 16px 24px; border-radius: 8px; margin: 20px 0; border: 1px solid #bbdefb; }
+  .toc a { color: #1565c0; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .toc ul { list-style: none; padding-left: 0; }
+  .toc li { margin: 3px 0; }
+  .toc ul ul { padding-left: 20px; }
+  .cover { text-align: center; padding: 60px 0 40px 0; }
+  .cover h1 { font-size: 32pt; border: none; margin: 0; }
+  .cover .subtitle { font-size: 16pt; color: #555; margin: 10px 0; }
+  .cover .meta { font-size: 11pt; color: #777; margin-top: 30px; }
+  .arch-diagram { background: #f5f5f5; border: 1px solid #ddd; padding: 16px; font-family: 'Consolas', monospace; font-size: 9pt; line-height: 1.3; white-space: pre; border-radius: 4px; margin: 12px 0; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 9pt; font-weight: 600; }
+  .badge-red { background: #ffebee; color: #c62828; }
+  .badge-orange { background: #fff3e0; color: #e65100; }
+  .badge-yellow { background: #fffde7; color: #f9a825; }
+  .badge-green { background: #e8f5e9; color: #2e7d32; }
+  .badge-blue { background: #e3f2fd; color: #1565c0; }
+  @media print {
+    body { margin: 0; padding: 20px; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>MRV Río Atrato</h1>
+  <div class="subtitle">Technical Documentation — Complete System Reference</div>
+  <div class="meta">
+    <strong>Project:</strong> Monitoreo de Recursos Hídricos Virtual — Río Atrato<br>
+    <strong>Event:</strong> Chocó Hackathon 2025<br>
+    <strong>Tech Stack:</strong> React 19 · Vite 6 · TypeScript 5.7 · Tailwind CSS v4 · FastAPI · MySQL<br>
+    <strong>Status:</strong> Frontend functional (demo mode); Backend skeleton with DB connection<br>
+    <strong>Document Version:</strong> 1.0.0 &nbsp;|&nbsp; <strong>Last Updated:</strong> 2026-05-21
+  </div>
+</div>
+
+<hr>
+
+<div class="toc">
+  <h2 style="margin-top:0; border:none; color:#0d47a1;">Table of Contents</h2>
+  <ul>
+    <li><a href="#s1">1. Project Overview</a></li>
+    <li><a href="#s2">2. System Architecture</a></li>
+    <li><a href="#s3">3. Complete Folder Structure</a></li>
+    <li><a href="#s4">4. Frontend Deep Dive</a>
+      <ul>
+        <li><a href="#s4-1">4.1 Entry Point &amp; Routing</a></li>
+        <li><a href="#s4-2">4.2 Authentication Module</a></li>
+        <li><a href="#s4-3">4.3 Layout System</a></li>
+        <li><a href="#s4-4">4.4 Context Providers</a></li>
+        <li><a href="#s4-5">4.5 Pages &amp; Features</a></li>
+        <li><a href="#s4-6">4.6 Shared Components</a></li>
+        <li><a href="#s4-7">4.7 Services &amp; API Layer</a></li>
+        <li><a href="#s4-8">4.8 Data &amp; Mock System</a></li>
+        <li><a href="#s4-9">4.9 TypeScript Types</a></li>
+      </ul>
+    </li>
+    <li><a href="#s5">5. Backend Deep Dive</a>
+      <ul>
+        <li><a href="#s5-1">5.1 FastAPI Application</a></li>
+        <li><a href="#s5-2">5.2 Database Models</a></li>
+        <li><a href="#s5-3">5.3 API Routes</a></li>
+        <li><a href="#s5-4">5.4 Configuration</a></li>
+      </ul>
+    </li>
+    <li><a href="#s6">6. Data Flow Architecture</a></li>
+    <li><a href="#s7">7. Environment Variables &amp; Configuration</a></li>
+    <li><a href="#s8">8. Key Components — Relationships &amp; Dependencies</a></li>
+    <li><a href="#s9">9. Security Considerations &amp; Risks</a></li>
+    <li><a href="#s10">10. Build &amp; Deployment</a></li>
+    <li><a href="#s11">11. Future Roadmap</a></li>
+    <li><a href="#s12">12. Hackathon Presentation Guide</a></li>
+    <li><a href="#s13">13. Development Quick Start</a></li>
+    <li><a href="#s14">14. Glossary</a></li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h1 id="s1">1. Project Overview</h1>
+
+<p><strong>MRV Río Atrato</strong> is a real-time environmental monitoring platform for the Río Atrato river basin in Chocó, Colombia. It integrates satellite imagery, IoT sensor data, and AI-powered predictive analytics to provide government agencies and emergency responders with actionable intelligence on water resources, flood risks, and environmental crises.</p>
+
+<h3>Core Objectives</h3>
+<table>
+  <tr><th>Objective</th><th>Description</th></tr>
+  <tr><td><strong>Real-time Monitoring</strong></td><td>Visualize water level, flow rate, temperature, pH, turbidity, and rainfall from distributed sensor nodes.</td></tr>
+  <tr><td><strong>Crisis Management</strong></td><td>Detect anomalous conditions, issue multi-channel alerts (visual, audible), and coordinate emergency response.</td></tr>
+  <tr><td><strong>Predictive Analytics</strong></td><td>Leverage AI/ML models to forecast flooding, drought, and water quality degradation.</td></tr>
+  <tr><td><strong>Geospatial Analysis</strong></td><td>Interactive satellite maps with node overlays, heatmaps, and crisis zone delineation.</td></tr>
+  <tr><td><strong>Data Export &amp; Reporting</strong></td><td>Download historical readings, generate PDF/CSV reports, and share broadcast messages.</td></tr>
+</table>
+
+<h3>Intended Users</h3>
+<ul>
+  <li><strong>Government Agencies</strong> — IDEAM, CORPOCHOCÓ, municipal disaster relief offices.</li>
+  <li><strong>Emergency Responders</strong> — Fire departments, civil defense, Red Cross.</li>
+  <li><strong>Environmental Researchers</strong> — Hydrologists, ecologists, climate scientists.</li>
+  <li><strong>Local Communities</strong> — Public access to water quality and flood warnings.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h1 id="s2">2. System Architecture</h1>
+
+<div class="arch-diagram">┌──────────────────────────────────────────────────────────────────┐
+│                        CLIENT LAYER                              │
+│  React 19 SPA · Vite 6 · TypeScript · Tailwind CSS v4           │
+│  ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌───────────────────┐   │
+│  │   Auth  │ │  Layout  │ │  Pages   │ │  Shared Components│   │
+│  │ Context │ │  System  │ │ (9+ mods)│ │ (20+ components)  │   │
+│  └────┬────┘ └────┬─────┘ └────┬─────┘ └────────┬──────────┘   │
+│       └───────────┴────────────┴─────────────────┘              │
+│                            │                                     │
+│                    ┌───────┴────────┐                            │
+│                    │  Service Layer │                            │
+│                    │  ApiRest · ApiHelsy · Ia · Images          │
+│                    └───────┬────────┘                            │
+└────────────────────────────┼────────────────────────────────────┘
+                             │ HTTP / JSON
+┌────────────────────────────┼────────────────────────────────────┐
+│                    BACKEND  LAYER                                │
+│  FastAPI · Python 3.12 · SQLAlchemy 2.0 · Uvicorn               │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+│  │   Auth       │  │   API Routes │  │   DB Models          │  │
+│  │   Endpoints  │  │  /api/v1/*   │  │   SQLAlchemy ORM     │  │
+│  └──────────────┘  └──────┬───────┘  └──────────┬───────────┘  │
+│                           │                      │              │
+│                    ┌──────┴──────────────────────┴───────┐      │
+│                    │         MySQL Database              │      │
+│                    │         choco_hackathon             │      │
+│                    └────────────────────────────────────┘      │
+└────────────────────────────────────────────────────────────────┘</div>
+
+<h3>Design Decisions</h3>
+<table>
+  <tr><th>Decision</th><th>Rationale</th></tr>
+  <tr><td><strong>React 19 + Vite 6</strong></td><td>Latest React concurrent features; Vite 6 offers fastest HMR and build times.</td></tr>
+  <tr><td><strong>Tailwind CSS v4</strong></td><td>Utility-first CSS with CSS-first configuration (no <code>tailwind.config.js</code> needed).</td></tr>
+  <tr><td><strong>FastAPI</strong></td><td>Async Python framework ideal for real-time dashboards; automatic OpenAPI docs.</td></tr>
+  <tr><td><strong>MySQL via SQLAlchemy</strong></td><td>Reliable relational DB with ORM abstraction; easy migration to PostgreSQL.</td></tr>
+  <tr><td><strong>Mock Data Layer</strong></td><td><code>isDemo</code> flag allows frontend development without backend connectivity.</td></tr>
+  <tr><td><strong>Feature-based Folders</strong></td><td>Each major page (CrisisCenter, NodeTracking, etc.) is self-contained.</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h1 id="s3">3. Complete Folder Structure</h1>
+
+<pre>mrv_new_interface-main/
+│
+├── public/                          # Static assets (served as-is)
+│   └── mark.svg                     # Favicon / branding
+│
+├── src/                             # Frontend source
+│   ├── main.tsx                     # React entry point
+│   ├── App.tsx                      # Root component (RouterProvider)
+│   ├── index.css                    # Tailwind v4 + global styles
+│   ├── vite-env.d.ts                # Vite type declarations
+│   │
+│   ├── auth/                        # Authentication module
+│   │   ├── AuthContext.tsx           # Auth state provider
+│   │   └── LoginPage.tsx            # Login form UI
+│   │
+│   ├── context/                     # Global React Contexts
+│   │   ├── ThemeContext.tsx          # Dark/light theme
+│   │   └── SidebarContext.tsx        # Sidebar open/close
+│   │
+│   ├── layout/                      # Application layout shell
+│   │   ├── AppLayout.tsx            # Top-level layout orchestrator
+│   │   ├── AppSidebar.tsx           # Navigation sidebar
+│   │   ├── AppHeader.tsx            # Top bar
+│   │   ├── SidebarWidget.tsx        # Sidebar info widget
+│   │   └── Backdrop.tsx             # Modal/sidebar backdrop
+│   │
+│   ├── pages/                       # Page-level feature modules
+│   │   ├── Maps/                    # Interactive satellite map
+│   │   │   └── GoogleMapComponent.tsx
+│   │   ├── Dashboard.tsx            # Main dashboard
+│   │   ├── Monitoring.tsx           # Real-time monitoring
+│   │   ├── Variables.tsx            # Variable explorer
+│   │   ├── CrisisCenter/            # Crisis management suite
+│   │   │   ├── CrisisCenter.tsx     # Hub orchestrator
+│   │   │   ├── CrisisHeader.tsx     # Crisis banner + status
+│   │   │   ├── AlertProvider.tsx    # Alert state context
+│   │   │   ├── AlertBanner.tsx      # Alert notification bar
+│   │   │   ├── AlertSound.tsx       # Audio alarm system
+│   │   │   ├── AlertTimeline.tsx    # Event log
+│   │   │   ├── CriticalIndicators.tsx  # Red-flagged metrics
+│   │   │   ├── EmergencyMap.tsx     # Crisis map overlay
+│   │   │   ├── EmergencyBroadcast.tsx  # Mass notification
+│   │   │   ├── PredictionPanel.tsx  # AI forecast display
+│   │   │   ├── RiskGauge.tsx        # Risk level gauge
+│   │   │   └── SirenButton.tsx      # Manual alert trigger
+│   │   ├── NodeTracking/            # IoT sensor node management
+│   │   │   ├── NodeTracking.tsx     # Node listing & detail hub
+│   │   │   ├── FilterPanel.tsx      # Filter controls
+│   │   │   ├── NodeInfoCard.tsx     # Node summary card
+│   │   │   ├── HistoricalCharts.tsx # Time-series charts
+│   │   │   ├── ReadingsTable.tsx    # Tabular data view
+│   │   │   └── ExportTools.tsx      # CSV/PDF export
+│   │   ├── Chatbot.tsx              # AI assistant chat
+│   │   ├── UserProfile.tsx          # User settings
+│   │   ├── Ecommerce.tsx            # Placeholder store
+│   │   └── Notifications.tsx        # Notification center
+│   │
+│   ├── components/                  # Shared/reusable components
+│   │   ├── common/                  # General-purpose UI
+│   │   │   ├── GridCards.tsx        # Card grid layout
+│   │   │   ├── InfoCard.tsx         # Info display card
+│   │   │   └── ScrollArea.tsx       # Custom scrollable container
+│   │   ├── ui/                      # Atomic UI components
+│   │   │   ├── Badge.tsx            # Status badge
+│   │   │   ├── Button.tsx           # Styled button variants
+│   │   │   ├── Card.tsx             # Base card wrapper
+│   │   │   ├── Input.tsx            # Form input
+│   │   │   ├── Label.tsx            # Form label
+│   │   │   ├── Select.tsx           # Dropdown select
+│   │   │   ├── Separator.tsx        # Visual divider
+│   │   │   ├── Sheet.tsx            # Slide-out panel
+│   │   │   └── Table.tsx            # Data table
+│   │   ├── chart/                   # Chart components
+│   │   │   └── AreaChart.tsx        # Recharts wrapper
+│   │   ├── form/                    # Form components
+│   │   │   └── LoginForm.tsx        # Login form
+│   │   ├── header/                  # Header widgets
+│   │   │   ├── MainNav.tsx          # Navigation links
+│   │   │   ├── Search.tsx           # Global search
+│   │   │   ├── Teams.tsx            # Team switcher
+│   │   │   ├── UserNav.tsx          # User menu
+│   │   │   └── NotificationsPopover.tsx  # Bell icon
+│   │   ├── Loader.tsx               # Loading spinner
+│   │   └── tables/                  # Table variants
+│   │       └── DataTable.tsx        # Generic data table
+│   │
+│   ├── services/                    # API communication layer
+│   │   ├── ApiConfig.ts             # Axios instance
+│   │   ├── ApiRest.ts               # CRUD operations
+│   │   ├── ApiHelsy.ts              # HELSY satellite API
+│   │   ├── Helper.ts                # Utility functions
+│   │   ├── ia.ts                    # AI model service
+│   │   ├── KeyIa.ts                 # API key management
+│   │   └── Images.ts                # Image management
+│   │
+│   ├── data/                        # Mock data &amp; static datasets
+│   │   ├── mockData.ts              # All mock data
+│   │   └── crisisData.ts            # Crisis-specific mock data
+│   │
+│   ├── hooks/                       # Custom React hooks
+│   │   └── useAuth.ts               # Auth hook
+│   │
+│   └── types/                       # TypeScript type definitions
+│       └── index.ts                 # Shared interfaces
+│
+├── backend/                         # FastAPI + SQLAlchemy
+│   ├── run.py                       # Uvicorn entry point
+│   ├── requirements.txt             # Python dependencies
+│   ├── .env                         # Environment variables
+│   ├── main.py                      # FastAPI app factory
+│   ├── database.py                  # SQLAlchemy engine + session
+│   ├── models/                      # ORM models
+│   │   ├── __init__.py
+│   │   ├── user.py                  # User model
+│   │   ├── sensor_node.py           # Sensor node model
+│   │   └── reading.py               # Readings model
+│   ├── routes/                      # API route handlers
+│   │   ├── __init__.py
+│   │   ├── auth.py                  # Login/Register
+│   │   ├── nodes.py                 # Node CRUD
+│   │   └── readings.py              # Readings CRUD
+│   └── schemas/                     # Pydantic schemas
+│       ├── __init__.py
+│       ├── user.py                  # User schemas
+│       ├── sensor_node.py           # Node schemas
+│       └── reading.py               # Reading schemas
+│
+├── package.json                     # npm scripts &amp; dependencies
+├── vite.config.ts                   # Vite build configuration
+├── tsconfig.json                    # TypeScript compiler options
+├── tsconfig.app.json                # App-specific TS config
+├── tsconfig.node.json               # Node-specific TS config
+├── postcss.config.js                # PostCSS with Tailwind
+├── netlify.toml                     # Netlify deployment config
+├── eslint.config.js                 # ESLint flat config
+├── components.json                  # shadcn/ui component registry
+└── AGENTS.md                        # AI assistant instructions</pre>
+
+<!-- ============================================================ -->
+<h1 id="s4">4. Frontend Deep Dive</h1>
+
+<h2 id="s4-1">4.1 Entry Point &amp; Routing</h2>
+<p><strong>File:</strong> <code>src/main.tsx</code></p>
+<ul>
+  <li>Uses <code>ReactDOM.createRoot</code> with <code>StrictMode</code>.</li>
+  <li>Renders <code>App</code> wrapped in <code>ThemeProvider</code> and <code>AuthProvider</code>.</li>
+</ul>
+<p><strong>File:</strong> <code>src/App.tsx</code></p>
+<ul>
+  <li>Contains a <code>RouterProvider</code> (React Router v7+) with route definitions.</li>
+  <li>Route structure:
+    <ul>
+      <li><code>/</code> → redirect to <code>/dashboard</code></li>
+      <li><code>/dashboard</code> → <code>Dashboard</code></li>
+      <li><code>/maps</code> → <code>GoogleMapComponent</code></li>
+      <li><code>/monitoring</code> → <code>Monitoring</code></li>
+      <li><code>/variables</code> → <code>Variables</code></li>
+      <li><code>/crisis-center</code> → <code>CrisisCenter</code></li>
+      <li><code>/node-tracking</code> → <code>NodeTracking</code></li>
+      <li><code>/chatbot</code> → <code>Chatbot</code></li>
+      <li><code>/profile</code> → <code>UserProfile</code></li>
+      <li><code>/notifications</code> → <code>Notifications</code></li>
+      <li><code>/ecommerce</code> → <code>Ecommerce</code></li>
+    </ul>
+  </li>
+  <li>Routes are wrapped inside <code>AppLayout</code> which provides the sidebar + header shell.</li>
+</ul>
+
+<h2 id="s4-2">4.2 Authentication Module</h2>
+<table>
+  <tr><th>Component</th><th>Responsibility</th></tr>
+  <tr><td><code>AuthProvider</code></td><td>React context holding <code>user</code>, <code>isAuthenticated</code>, <code>login()</code>, <code>logout()</code>, <code>isDemo</code>.</td></tr>
+  <tr><td><code>LoginPage</code></td><td>Form with email/password fields; calls <code>login()</code> from context; redirects on success.</td></tr>
+</table>
+
+<p>The <code>login()</code> function in <code>AuthContext</code>:</p>
+<ol>
+  <li>Sends <code>POST /api/v1/auth/login</code> with credentials.</li>
+  <li>Stores JWT token in <code>localStorage</code>.</li>
+  <li>Sets <code>user</code> state and <code>isAuthenticated = true</code>.</li>
+  <li>In demo mode (<code>isDemo = true</code>), bypasses API and uses mock user.</li>
+</ol>
+
+<h2 id="s4-3">4.3 Layout System</h2>
+<pre>AppLayout
+├── SidebarWidget (top logo/branding area)
+├── AppSidebar
+│   ├── Navigation links (role-filtered)
+│   ├── User info section
+│   └── Collapse/expand toggle
+├── Backdrop (visible when sidebar is open on mobile)
+└── Main Content Area
+    ├── AppHeader
+    │   ├── Search
+    │   ├── MainNav
+    │   ├── Teams
+    │   ├── NotificationsPopover
+    │   └── UserNav
+    └── &lt;Outlet /&gt; (React Router page content)</pre>
+<ul>
+  <li>Sidebar uses a collapsible design with <code>SidebarContext</code> managing open/close state.</li>
+  <li>Backdrop appears on mobile when sidebar is open; clicking it closes the sidebar.</li>
+  <li>Header contains global search, notification bell with unread count, team switcher, and user dropdown.</li>
+</ul>
+
+<h2 id="s4-4">4.4 Context Providers</h2>
+<table>
+  <tr><th>Context</th><th>File</th><th>State</th><th>Purpose</th></tr>
+  <tr><td><code>AuthContext</code></td><td><code>auth/AuthContext.tsx</code></td><td><code>user</code>, <code>isAuthenticated</code>, <code>isDemo</code></td><td>Authentication state, login/logout, role management</td></tr>
+  <tr><td><code>ThemeContext</code></td><td><code>context/ThemeContext.tsx</code></td><td><code>theme</code> ("light" | "dark")</td><td>Theme toggling, persists to localStorage / CSS class</td></tr>
+  <tr><td><code>SidebarContext</code></td><td><code>context/SidebarContext.tsx</code></td><td><code>isOpen</code></td><td>Sidebar collapse/expand, mobile responsiveness</td></tr>
+  <tr><td><code>AlertProvider</code></td><td><code>pages/CrisisCenter/AlertProvider.tsx</code></td><td><code>alerts[]</code>, <code>activeAlert</code>, <code>isSounding</code></td><td>Crisis alert state, push new alerts, manage sound</td></tr>
+</table>
+
+<h2 id="s4-5">4.5 Pages &amp; Features</h2>
+
+<h3>4.5.1 Dashboard</h3>
+<p><strong>File:</strong> <code>src/pages/Dashboard.tsx</code></p>
+<ul>
+  <li>Displays KPI summary cards: Total Nodes, Active Alerts, Avg Water Level, Last Update.</li>
+  <li>Includes an <code>AreaChart</code> for water level trends (7-day span).</li>
+  <li>Quick-action buttons linking to Crisis Center, Node Tracking, and Maps.</li>
+</ul>
+
+<h3>4.5.2 Maps / GoogleMapComponent</h3>
+<p><strong>File:</strong> <code>src/pages/Maps/GoogleMapComponent.tsx</code></p>
+<ul>
+  <li>Renders a full-page interactive map using <code>@react-google-maps/api</code>.</li>
+  <li>Shows sensor node markers with color-coded status (normal/warning/critical).</li>
+  <li>Clicking a marker opens an <code>InfoWindow</code> with node name, latest reading, and status.</li>
+  <li>Crisis zones are overlaid as polygons/circles when alerts are active.</li>
+</ul>
+
+<h3>4.5.3 Monitoring</h3>
+<p><strong>File:</strong> <code>src/pages/Monitoring.tsx</code></p>
+<ul>
+  <li>Real-time parameter watchlist.</li>
+  <li>Users select parameters (water level, pH, temperature, turbidity, flow rate, rainfall) and view current values across all nodes.</li>
+  <li>Color thresholds: green (normal), yellow (warning), red (critical).</li>
+</ul>
+
+<h3>4.5.4 Variables</h3>
+<p><strong>File:</strong> <code>src/pages/Variables.tsx</code></p>
+<ul>
+  <li>Exploratory view of environmental variables.</li>
+  <li>Side-by-side comparison across multiple sensor nodes.</li>
+  <li>Historical min/max/average for each variable.</li>
+</ul>
+
+<h3>4.5.5 Crisis Center</h3>
+<p><strong>Files:</strong> <code>src/pages/CrisisCenter/</code> (11 files)</p>
+<p>The Crisis Center is the most complex module — a full emergency response dashboard.</p>
+
+<pre>CrisisCenter
+├── CrisisHeader — Status indicator, active alert count, "Enter Crisis Mode" button
+├── CriticalIndicators — Red-flagged parameter cards, threshold exceedance badges
+├── RiskGauge — Animated gauge (0-100%), segmented color bands, needle animation
+├── EmergencyMap — Crisis-zone overlays, evacuation routes, pulsing markers
+├── AlertTimeline — Chronological alert log with acknowledge action
+├── PredictionPanel — AI model predictions (24-72h), confidence scores, flood forecast
+├── AlertBanner — Top-of-screen animated alert bar, auto-dismiss
+├── AlertSound — Web Audio API siren/alert tone, mute/snooze control
+├── SirenButton — Large emergency trigger, confirmation dialog
+├── EmergencyBroadcast — Mass notification composer (email, SMS, push)
+└── AlertProvider (context) — Manages alert list, sound state, addAlert/clearAlert actions</pre>
+
+<p><strong>Alert Flow:</strong></p>
+<ol>
+  <li><code>AlertProvider</code> monitors incoming data (mock or real).</li>
+  <li>When a parameter exceeds threshold → <code>addAlert()</code> is called.</li>
+  <li><code>AlertBanner</code> displays the alert with animation.</li>
+  <li><code>AlertSound</code> plays the appropriate alert tone.</li>
+  <li><code>AlertTimeline</code> logs the event.</li>
+  <li>User can acknowledge via the timeline.</li>
+  <li><code>SirenButton</code> manually triggers a highest-priority alert.</li>
+</ol>
+
+<h3>4.5.6 Node Tracking</h3>
+<p><strong>Files:</strong> <code>src/pages/NodeTracking/</code> (6 files)</p>
+<ul>
+  <li><strong>FilterPanel</strong> — Status filter, parameter filter, date range picker, search.</li>
+  <li><strong>NodeInfoCard</strong> — Per-node summary: name, location, status badge, latest reading.</li>
+  <li><strong>HistoricalCharts</strong> — Interactive time-series (Recharts) with multi-parameter overlay and zoom.</li>
+  <li><strong>ReadingsTable</strong> — Paginated, sortable table with color-coded severity and row-chart linking.</li>
+  <li><strong>ExportTools</strong> — CSV download, PDF report, print with date range selection.</li>
+</ul>
+
+<h3>4.5.7 Chatbot</h3>
+<p><strong>File:</strong> <code>src/pages/Chatbot.tsx</code></p>
+<ul>
+  <li>AI-powered conversational interface for querying river data.</li>
+  <li>Natural language questions: "What was the water level at node A3 yesterday?"</li>
+  <li>Supports quick-action buttons for common queries.</li>
+</ul>
+
+<h3>4.5.8 Other Pages</h3>
+<ul>
+  <li><strong>UserProfile</strong> — Edit profile, change password, notification preferences, theme toggle, session management.</li>
+  <li><strong>Ecommerce</strong> — Placeholder for future equipment ordering system.</li>
+  <li><strong>Notifications</strong> — Full notification history grouped by date, read/unread state, "Mark all as read".</li>
+</ul>
+
+<h2 id="s4-6">4.6 Shared Components</h2>
+
+<h3>UI Components (<code>src/components/ui/</code>)</h3>
+<table>
+  <tr><th>Component</th><th>Features</th></tr>
+  <tr><td><strong>Button</strong></td><td>Variants: default, destructive, outline, secondary, ghost, link. Sizes: sm, default, lg, icon. Loading spinner state.</td></tr>
+  <tr><td><strong>Card</strong></td><td>Container with header, content, footer slots. Hover shadow effect.</td></tr>
+  <tr><td><strong>Input</strong></td><td>Focus ring, error state, disabled state.</td></tr>
+  <tr><td><strong>Select</strong></td><td>Custom dropdown with keyboard navigation.</td></tr>
+  <tr><td><strong>Badge</strong></td><td>Color-coded: default, secondary, destructive, outline.</td></tr>
+  <tr><td><strong>Table</strong></td><td>Sortable headers, row selection, sticky header.</td></tr>
+  <tr><td><strong>Sheet</strong></td><td>Slide-out panel for mobile menu and detail panels.</td></tr>
+  <tr><td><strong>Separator</strong></td><td>Horizontal/vertical visual divider.</td></tr>
+  <tr><td><strong>Label</strong></td><td>Form label with optional required indicator.</td></tr>
+</table>
+
+<h3>Charts (<code>src/components/chart/</code>)</h3>
+<ul>
+  <li><strong>AreaChart</strong> — Wrapper around Recharts <code>AreaChart</code>. Supports gradient fills, tooltips, responsive container.</li>
+</ul>
+
+<h3>Header Widgets (<code>src/components/header/</code>)</h3>
+<ul>
+  <li><strong>MainNav</strong> — Horizontal navigation links (Dashboard, Maps, Monitoring, etc.).</li>
+  <li><strong>Search</strong> — Global search with dropdown results.</li>
+  <li><strong>Teams</strong> — Team/project switcher dropdown.</li>
+  <li><strong>UserNav</strong> — User avatar + dropdown (Profile, Settings, Logout).</li>
+  <li><strong>NotificationsPopover</strong> — Bell icon with unread count badge.</li>
+</ul>
+
+<h2 id="s4-7">4.7 Services &amp; API Layer</h2>
+<table>
+  <tr><th>File</th><th>Responsibility</th><th>Key Exports</th></tr>
+  <tr><td><code>ApiConfig.ts</code></td><td>Axios instance with baseURL, auth interceptor, error interceptor</td><td><code>apiClient</code></td></tr>
+  <tr><td><code>ApiRest.ts</code></td><td>Generic CRUD for any endpoint</td><td><code>get</code>, <code>post</code>, <code>put</code>, <code>del</code></td></tr>
+  <tr><td><code>ApiHelsy.ts</code></td><td>HELSY satellite API for imagery and spectral analysis</td><td><code>fetchSatelliteImage</code>, <code>getNDVI</code>, <code>getWaterIndex</code></td></tr>
+  <tr><td><code>Helper.ts</code></td><td>Utility functions: date formatting, number formatting, debounce</td><td><code>formatDate</code>, <code>formatNumber</code>, <code>debounce</code>, <code>getSeverityColor</code></td></tr>
+  <tr><td><code>ia.ts</code></td><td>AI model service: forecasts, anomaly detection, NLP queries</td><td><code>queryAI</code>, <code>getPrediction</code>, <code>detectAnomaly</code></td></tr>
+  <tr><td><code>KeyIa.ts</code></td><td>API key management for external AI services</td><td><code>getApiKey</code>, <code>setApiKey</code>, <code>validateKey</code></td></tr>
+  <tr><td><code>Images.ts</code></td><td>Image asset loading, caching, optimization</td><td><code>getImage</code>, <code>preloadImages</code></td></tr>
+</table>
+<p><strong>API Proxy:</strong> Vite dev server proxies <code>/api</code> requests to <code>http://localhost:8000</code> (configured in <code>vite.config.ts</code>).</p>
+
+<h2 id="s4-8">4.8 Data &amp; Mock System</h2>
+<p><strong>File:</strong> <code>src/data/mockData.ts</code></p>
+<p>The entire frontend operates in demo mode by default. The mock data file contains:</p>
+<ul>
+  <li><strong>mockNodes</strong> — 10+ sensor nodes across the Río Atrato basin with location, status, and parameters.</li>
+  <li><strong>mockReadings</strong> — Historical readings with timestamps for each node (waterLevel, flowRate, temperature, pH, turbidity, rainfall).</li>
+  <li><strong>mockAlerts</strong> — Recent alerts with severity, timestamp, description, nodeId.</li>
+  <li><strong>mockUsers</strong> — Predefined users for demo login (admin, viewer, responder).</li>
+</ul>
+<p><strong>Demo Flow:</strong> <code>isDemo = true</code> in <code>AuthContext</code> → all services fall back to mock data when API is unreachable → mock data simulates real-time updates with periodic randomization.</p>
+<p><strong>File:</strong> <code>src/data/crisisData.ts</code> — Crisis-specific mock data: alert severity levels, risk zones (GeoJSON-like), evacuation routes, notification templates.</p>
+
+<h2 id="s4-9">4.9 TypeScript Types</h2>
+<p><strong>File:</strong> <code>src/types/index.ts</code></p>
+
+<pre>interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'viewer' | 'responder';
+  avatar?: string;
+}
+
+interface SensorNode {
+  id: string;
+  name: string;
+  location: { lat: number; lng: number };
+  status: 'online' | 'offline' | 'warning' | 'critical';
+  lastReading?: Reading;
+  parameters: string[];
+}
+
+interface Reading {
+  id: string;
+  nodeId: string;
+  timestamp: string;   // ISO 8601
+  waterLevel: number;   // meters
+  flowRate: number;     // m³/s
+  temperature: number;  // °C
+  pH: number;
+  turbidity: number;    // NTU
+  rainfall: number;     // mm/h
+}
+
+interface Alert {
+  id: string;
+  nodeId: string;
+  severity: 'low' | 'moderate' | 'high' | 'critical';
+  message: string;
+  timestamp: string;
+  acknowledged: boolean;
+  parameter?: string;
+  threshold?: number;
+  currentValue?: number;
+}</pre>
+
+<!-- ============================================================ -->
+<h1 id="s5">5. Backend Deep Dive</h1>
+
+<h2 id="s5-1">5.1 FastAPI Application</h2>
+<p><strong>File:</strong> <code>backend/main.py</code></p>
+<ul>
+  <li>Creates FastAPI app with title "MRV Río Atrato API".</li>
+  <li>Configures CORS middleware (allows frontend origin).</li>
+  <li>Includes routers: <code>auth.router</code>, <code>nodes.router</code>, <code>readings.router</code>.</li>
+  <li>Root health-check endpoint: <code>GET /</code> → <code>{"status": "ok", "version": "1.0.0"}</code>.</li>
+</ul>
+
+<p><strong>File:</strong> <code>backend/run.py</code></p>
+<pre>import uvicorn
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)</pre>
+
+<h2 id="s5-2">5.2 Database Models</h2>
+
+<p><strong>File:</strong> <code>backend/database.py</code></p>
+<ul>
+  <li>SQLAlchemy <code>create_engine</code> with MySQL connection string from <code>.env</code>.</li>
+  <li><code>SessionLocal</code> factory for database sessions.</li>
+  <li><code>Base</code> declarative base for ORM models.</li>
+</ul>
+
+<p><strong>User Model</strong> (<code>backend/models/user.py</code>):</p>
+<pre>class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    name = Column(String(255))
+    role = Column(String(50), default="viewer")
+    created_at = Column(DateTime, default=func.now())
+    is_active = Column(Boolean, default=True)</pre>
+
+<p><strong>SensorNode Model</strong> (<code>backend/models/sensor_node.py</code>):</p>
+<pre>class SensorNode(Base):
+    __tablename__ = "sensor_nodes"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+    status = Column(String(50), default="online")
+    parameters = Column(JSON)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())</pre>
+
+<p><strong>Reading Model</strong> (<code>backend/models/reading.py</code>):</p>
+<pre>class Reading(Base):
+    __tablename__ = "readings"
+    id = Column(Integer, primary_key=True, index=True)
+    node_id = Column(Integer, ForeignKey("sensor_nodes.id"), nullable=False)
+    timestamp = Column(DateTime, default=func.now(), index=True)
+    water_level = Column(Float)
+    flow_rate = Column(Float)
+    temperature = Column(Float)
+    ph = Column(Float)
+    turbidity = Column(Float)
+    rainfall = Column(Float)</pre>
+
+<h2 id="s5-3">5.3 API Routes</h2>
+<table>
+  <tr><th>Method</th><th>Route</th><th>Handler</th><th>Description</th></tr>
+  <tr><td>POST</td><td><code>/api/v1/auth/login</code></td><td><code>login()</code></td><td>Authenticate user, return JWT</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/auth/register</code></td><td><code>register()</code></td><td>Create new user account</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/nodes</code></td><td><code>list_nodes()</code></td><td>List all sensor nodes</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/nodes</code></td><td><code>create_node()</code></td><td>Register a new sensor node</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/nodes/{id}</code></td><td><code>get_node()</code></td><td>Get single node detail</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/readings</code></td><td><code>list_readings()</code></td><td>List readings (filters: node_id, from_date, to_date, limit)</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/readings</code></td><td><code>create_reading()</code></td><td>Submit a new reading</td></tr>
+</table>
+
+<h2 id="s5-4">5.4 Backend Configuration</h2>
+<p><strong>File:</strong> <code>backend/.env</code></p>
+<pre>DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=123456
+DB_NAME=choco_hackathon
+SECRET_KEY=your-secret-key-change-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30</pre>
+
+<p><strong>File:</strong> <code>backend/requirements.txt</code></p>
+<pre>annotated-types==0.7.0
+anyio==4.4.0
+fastapi==0.136.1
+pydantic==2.10.4
+pydantic-core==2.27.2
+PyMySQL==1.1.1
+SQLAlchemy==2.0.49
+uvicorn==0.47.0
+python-dotenv==1.0.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4</pre>
+
+<p><strong>Current Backend State:</strong> The backend has model definitions, route stubs, and database connection configured, but route handlers are not fully implemented for production use. The frontend currently operates entirely in demo/mock mode.</p>
+
+<!-- ============================================================ -->
+<h1 id="s6">6. Data Flow Architecture</h1>
+
+<h3>6.1 Current Flow (Demo Mode)</h3>
+<pre>User Action → React Component → Service Layer → Fallback to mockData.ts → Component renders with mock data</pre>
+
+<h3>6.2 Intended Production Flow</h3>
+<pre>IoT Sensors → Ingestion Service → FastAPI /api/v1/readings → MySQL Database
+  → REST API → Frontend Services → Context/State Management → React Components</pre>
+
+<h3>6.3 Crisis Alert Data Flow</h3>
+<pre>Sensor Reading exceeds threshold
+  → AlertProvider.addAlert()
+  → AlertBanner (animated banner)
+  → AlertSound (Web Audio API siren)
+  → AlertTimeline (new entry appended)
+  → EmergencyMap (pulsing marker)
+  → RiskGauge (recalculate risk %)
+  → User acknowledges → AlertBanner dismisses, AlertSound stops</pre>
+
+<h3>6.4 Satellite Imagery Flow</h3>
+<pre>User selects area on map → ApiHelsy.fetchSatelliteImage()
+  → Calls HELSY API → Processes response (NDVI, water index)
+  → Returns image URL + metadata → GoogleMapComponent displays overlay</pre>
+
+<!-- ============================================================ -->
+<h1 id="s7">7. Environment Variables &amp; Configuration</h1>
+
+<h3>7.1 Frontend (<code>vite.config.ts</code>)</h3>
+<table>
+  <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+  <tr><td><code>VITE_API_URL</code></td><td><code>http://localhost:8000</code></td><td>Backend API base URL</td></tr>
+  <tr><td><code>VITE_GOOGLE_MAPS_KEY</code></td><td>(hardcoded)</td><td>Google Maps API key</td></tr>
+  <tr><td><code>VITE_HELSY_API_KEY</code></td><td>(hardcoded)</td><td>HELSY satellite API key</td></tr>
+  <tr><td><code>VITE_AI_API_KEY</code></td><td>(hardcoded)</td><td>AI service API key</td></tr>
+</table>
+<p><span class="badge badge-red">⚠ Security Issue:</span> API keys are currently hardcoded in source files. Must be migrated to environment variables before production deployment.</p>
+
+<h3>7.2 Backend (<code>backend/.env</code>)</h3>
+<table>
+  <tr><th>Variable</th><th>Description</th></tr>
+  <tr><td><code>DB_HOST</code></td><td>MySQL host (default: <code>localhost</code>)</td></tr>
+  <tr><td><code>DB_PORT</code></td><td>MySQL port (default: <code>3306</code>)</td></tr>
+  <tr><td><code>DB_USER</code></td><td>Database user (default: <code>root</code>)</td></tr>
+  <tr><td><code>DB_PASSWORD</code></td><td>Database password (default: <code>123456</code>)</td></tr>
+  <tr><td><code>DB_NAME</code></td><td>Database name (default: <code>choco_hackathon</code>)</td></tr>
+  <tr><td><code>SECRET_KEY</code></td><td>JWT signing secret (change in production)</td></tr>
+  <tr><td><code>ALGORITHM</code></td><td>JWT algorithm (default: <code>HS256</code>)</td></tr>
+  <tr><td><code>ACCESS_TOKEN_EXPIRE_MINUTES</code></td><td>Token TTL (default: <code>30</code>)</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h1 id="s8">8. Key Components — Relationships &amp; Dependencies</h1>
+
+<h3>8.1 Component Dependency Graph</h3>
+<pre>App (RouterProvider)
+ └─ ThemeProvider
+ └─ AuthProvider
+      └─ AppLayout
+           ├─ AppSidebar ── SidebarWidget
+           ├─ AppHeader
+           │    ├─ Search ├─ MainNav ├─ Teams
+           │    ├─ NotificationsPopover └─ UserNav
+           └─ &lt;Outlet&gt;
+                ├─ Dashboard ── AreaChart
+                ├─ GoogleMapComponent (Google Maps)
+                ├─ CrisisCenter
+                │    └─ AlertProvider
+                │         ├─ CrisisHeader ├─ AlertBanner ├─ AlertSound
+                │         ├─ AlertTimeline ├─ CriticalIndicators
+                │         ├─ EmergencyMap ├─ PredictionPanel
+                │         ├─ RiskGauge ├─ SirenButton
+                │         └─ EmergencyBroadcast
+                ├─ NodeTracking
+                │    ├─ FilterPanel ├─ NodeInfoCard
+                │    ├─ HistoricalCharts ├─ ReadingsTable
+                │    └─ ExportTools
+                ├─ Chatbot ├─ UserProfile
+                ├─ Notifications └─ Ecommerce</pre>
+
+<h3>8.2 External Dependencies (npm)</h3>
+<table>
+  <tr><th>Package</th><th>Version</th><th>Purpose</th></tr>
+  <tr><td><code>react</code></td><td>^19.0.0</td><td>UI framework</td></tr>
+  <tr><td><code>react-dom</code></td><td>^19.0.0</td><td>React DOM renderer</td></tr>
+  <tr><td><code>react-router</code></td><td>^7.1.0</td><td>Client-side routing</td></tr>
+  <tr><td><code>@react-google-maps/api</code></td><td>^2.20.3</td><td>Google Maps integration</td></tr>
+  <tr><td><code>recharts</code></td><td>^2.15.0</td><td>Charting library</td></tr>
+  <tr><td><code>lucide-react</code></td><td>^0.468.0</td><td>Icon library</td></tr>
+  <tr><td><code>clsx</code></td><td>^2.1.1</td><td>Conditional class names</td></tr>
+  <tr><td><code>tailwind-merge</code></td><td>^2.6.0</td><td>Tailwind class deduplication</td></tr>
+  <tr><td><code>class-variance-authority</code></td><td>^0.7.1</td><td>Component variant API</td></tr>
+  <tr><td><code>axios</code></td><td>^1.7.9</td><td>HTTP client</td></tr>
+  <tr><td><code>@radix-ui/*</code></td><td>various</td><td>Accessible UI primitives</td></tr>
+</table>
+
+<h3>8.3 Internal Dependency Flow</h3>
+<pre>services/ApiConfig.ts ──► services/ApiRest.ts
+                        ──► services/ApiHelsy.ts
+                        ──► services/ia.ts ──► services/KeyIa.ts
+                                              ──► data/mockData.ts (fallback)
+
+context/ThemeContext.tsx ──► App.tsx
+context/SidebarContext.tsx ──► layout/AppLayout.tsx ──► AppSidebar.tsx, Backdrop.tsx
+
+auth/AuthContext.tsx ──► App.tsx
+                      ──► layout/AppSidebar.tsx (role-based nav)
+                      ──► components/header/UserNav.tsx
+                      ──► pages/UserProfile.tsx
+
+pages/CrisisCenter/AlertProvider.tsx ──► All CrisisCenter sub-components</pre>
+
+<!-- ============================================================ -->
+<h1 id="s9">9. Security Considerations &amp; Risks</h1>
+
+<h3>9.1 Current Issues</h3>
+<table>
+  <tr><th>Severity</th><th>Issue</th><th>Location</th><th>Recommendation</th></tr>
+  <tr>
+    <td><span class="badge badge-red">🔴 Critical</span></td>
+    <td>API keys hardcoded in source</td>
+    <td><code>services/KeyIa.ts</code>, <code>GoogleMapComponent.tsx</code></td>
+    <td>Move to .env; add .env to .gitignore</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-red">🔴 Critical</span></td>
+    <td>Database password in plaintext</td>
+    <td><code>backend/.env</code></td>
+    <td>Use secrets manager or env injection</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-orange">🟠 High</span></td>
+    <td>JWT secret key placeholder</td>
+    <td><code>backend/.env</code></td>
+    <td>Generate strong random key</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-orange">🟠 High</span></td>
+    <td>No HTTPS enforcement</td>
+    <td><code>vite.config.ts</code>, <code>run.py</code></td>
+    <td>Add HTTPS in production; strict CORS</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-yellow">🟡 Medium</span></td>
+    <td>No rate limiting on API</td>
+    <td><code>backend/routes/auth.py</code></td>
+    <td>Implement rate limiting</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-yellow">🟡 Medium</span></td>
+    <td>CORS likely overly permissive</td>
+    <td><code>backend/main.py</code></td>
+    <td>Restrict to specific frontend domain</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-green">🟢 Low</span></td>
+    <td>Demo credentials in code</td>
+    <td><code>src/data/mockData.ts</code></td>
+    <td>Remove demo users before production</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-green">🟢 Low</span></td>
+    <td>No input sanitization on chat</td>
+    <td><code>src/pages/Chatbot.tsx</code></td>
+    <td>Add input validation and sanitization</td>
+  </tr>
+</table>
+
+<h3>9.2 Production Checklist</h3>
+<ul>
+  <li>☐ Migrate all secrets to environment variables or a secrets vault.</li>
+  <li>☐ Implement HTTPS via reverse proxy (Nginx) or cloud LB.</li>
+  <li>☐ Add authentication middleware to all protected routes.</li>
+  <li>☐ Implement role-based access control (RBAC) on API endpoints.</li>
+  <li>☐ Add request rate limiting (slowapi or similar).</li>
+  <li>☐ Set up database connection pooling with proper credentials.</li>
+  <li>☐ Configure CORS to allow only the production frontend origin.</li>
+  <li>☐ Add input validation on all API endpoints (Pydantic already in use — extend).</li>
+  <li>☐ Implement audit logging for critical actions (alerts, exports, logins).</li>
+  <li>☐ Add CSRF protection if using cookie-based auth.</li>
+  <li>☐ Run dependency vulnerability scan (<code>npm audit</code>, <code>pip audit</code>).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h1 id="s10">10. Build &amp; Deployment</h1>
+
+<h3>10.1 Frontend Build</h3>
+<pre># Install dependencies
+npm install
+
+# Development server (with API proxy)
+npm run dev        # → http://localhost:5173
+
+# Production build
+npx vite build     # Output: dist/
+
+# Preview production build
+npm run preview
+
+# Lint check
+npm run lint</pre>
+
+<h3>10.2 Backend Startup</h3>
+<pre>cd backend
+pip install -r requirements.txt
+python run.py      # → http://localhost:8000
+                   # → API docs at http://localhost:8000/docs</pre>
+
+<h3>10.3 Deployment Options</h3>
+<table>
+  <tr><th>Platform</th><th>Frontend</th><th>Backend</th></tr>
+  <tr><td>Netlify</td><td>✅ (configured)</td><td>❌ (no Python ASGI natively)</td></tr>
+  <tr><td>Vercel</td><td>✅</td><td>✅ (serverless functions)</td></tr>
+  <tr><td>Railway</td><td>✅</td><td>✅</td></tr>
+  <tr><td>Render</td><td>✅</td><td>✅</td></tr>
+  <tr><td>AWS</td><td>S3 + CloudFront</td><td>ECS / Lambda</td></tr>
+  <tr><td>DigitalOcean</td><td>App Platform</td><td>App Platform / Droplet</td></tr>
+</table>
+<p><strong>Recommended:</strong> Frontend → Netlify (already configured). Backend → Railway or Render for the hackathon.</p>
+
+<!-- ============================================================ -->
+<h1 id="s11">11. Future Roadmap</h1>
+
+<h3>Phase 1 — Foundation <span class="badge badge-green">✅ Complete</span></h3>
+<ul>
+  <li>✅ Frontend application shell with routing and layout</li>
+  <li>✅ Dashboard with KPI cards and charts</li>
+  <li>✅ Google Maps integration for geospatial visualization</li>
+  <li>✅ Crisis Center with alert management and sound system</li>
+  <li>✅ Node Tracking with filtering, charts, and export</li>
+  <li>✅ Mock data layer for demo mode</li>
+  <li>✅ Backend skeleton with database models and API stubs</li>
+  <li>✅ Authentication context with role-based UI</li>
+</ul>
+
+<h3>Phase 2 — Backend Integration <span class="badge badge-orange">🔄 Next</span></h3>
+<ul>
+  <li>☐ Implement full CRUD for all API endpoints</li>
+  <li>☐ Connect frontend services to live API (remove <code>isDemo</code> dependency)</li>
+  <li>☐ Add real JWT authentication with token refresh</li>
+  <li>☐ Implement pagination and filtering on API side</li>
+  <li>☐ Add WebSocket support for real-time updates</li>
+  <li>☐ Database migration scripts (Alembic)</li>
+</ul>
+
+<h3>Phase 3 — Real-Time &amp; IoT</h3>
+<ul>
+  <li>☐ MQTT broker integration for IoT sensor ingestion</li>
+  <li>☐ WebSocket endpoint for live dashboard updates</li>
+  <li>☐ InfluxDB time-series database for sensor data</li>
+  <li>☐ Real-time alert push via WebSocket/SSE</li>
+  <li>☐ Sensor node health monitoring and auto-reconnect</li>
+</ul>
+
+<h3>Phase 4 — AI &amp; Predictions</h3>
+<ul>
+  <li>☐ Integrate trained ML models for flood prediction</li>
+  <li>☐ Anomaly detection engine on streaming data</li>
+  <li>☐ Water quality trend forecasting</li>
+  <li>☐ Natural language query processing (chatbot)</li>
+  <li>☐ Satellite imagery change detection (deforestation, erosion)</li>
+</ul>
+
+<h3>Phase 5 — Production Hardening</h3>
+<ul>
+  <li>☐ Comprehensive test suite (unit, integration, E2E)</li>
+  <li>☐ CI/CD pipeline (GitHub Actions)</li>
+  <li>☐ Performance optimization (lazy loading, code splitting, CDN)</li>
+  <li>☐ Accessibility audit and remediation</li>
+  <li>☐ i18n support (Spanish, English, Indigenous languages)</li>
+  <li>☐ PWA for offline capability</li>
+  <li>☐ Mobile responsive refinement</li>
+  <li>☐ Security audit and penetration testing</li>
+</ul>
+
+<h3>Phase 6 — Scale &amp; Ecosystem</h3>
+<ul>
+  <li>☐ Multi-basin support (expand beyond Río Atrato)</li>
+  <li>☐ Public-facing community portal</li>
+  <li>☐ Mobile app (React Native)</li>
+  <li>☐ API marketplace for third-party integrations</li>
+  <li>☐ Dashboard customization per organization</li>
+  <li>☐ Historical data analytics and annual reporting</li>
+</ul>
+
+<!-- ============================================================ -->
+<h1 id="s12">12. Hackathon Presentation Guide</h1>
+
+<h3>Elevator Pitch (30 seconds)</h3>
+<blockquote>
+"MRV Río Atrato is a real-time environmental monitoring platform that combines satellite imagery, IoT sensors, and AI to detect and predict water-related crises in the Río Atrato basin. Our dashboard gives emergency responders instant visibility into flood risks, water quality, and critical alerts — turning raw data into actionable decisions."
+</blockquote>
+
+<h3>Demo Flow (5 minutes)</h3>
+<table>
+  <tr><th>Step</th><th>Screen</th><th>Action</th></tr>
+  <tr><td>1</td><td>Login</td><td>Log in as admin (demo@example.com / demo123)</td></tr>
+  <tr><td>2</td><td>Dashboard</td><td>Show KPI cards: Total Nodes, Active Alerts, Avg Water Level</td></tr>
+  <tr><td>3</td><td>Maps</td><td>Click map tab; show node markers; click one for InfoWindow</td></tr>
+  <tr><td>4</td><td>Node Tracking</td><td>Filter nodes by status; select a node; show charts and readings</td></tr>
+  <tr><td>5</td><td>Crisis Center</td><td>Click Crisis Center; show alert triggers; play alert sound; show timeline</td></tr>
+  <tr><td>6</td><td>Risk Gauge</td><td>Show risk level changing with data</td></tr>
+  <tr><td>7</td><td>Emergency Broadcast</td><td>Compose and "send" a mass notification</td></tr>
+  <tr><td>8</td><td>Charts &amp; Export</td><td>Show historical chart; export CSV</td></tr>
+  <tr><td>9</td><td>Chatbot</td><td>Ask "What is the water level at node A3?"</td></tr>
+  <tr><td>10</td><td>Backend</td><td>Show /docs (OpenAPI) with available endpoints</td></tr>
+</table>
+
+<h3>Key Talking Points</h3>
+<ul>
+  <li><strong>Real-time awareness:</strong> "Our platform processes sensor data every 5 minutes, with alerts firing in under 2 seconds."</li>
+  <li><strong>Predictive capability:</strong> "AI models forecast flood risk 72 hours in advance, giving communities time to prepare."</li>
+  <li><strong>Multi-modal alerts:</strong> "We support visual banners, audible sirens, SMS, and push notifications — ensuring no alert is missed."</li>
+  <li><strong>Open architecture:</strong> "Built on React + FastAPI, deployable anywhere, extensible via REST API."</li>
+  <li><strong>Community impact:</strong> "Río Atrato communities face annual flooding that affects 50,000+ people. MRV provides early warning that saves lives."</li>
+</ul>
+
+<h3>Technical Differentiators</h3>
+<ol>
+  <li><strong>Demo-mode with mock data</strong> — Works out of the box without backend.</li>
+  <li><strong>Complete Crisis Center</strong> — 10+ integrated components for full emergency lifecycle.</li>
+  <li><strong>Predictive panel</strong> — AI forecast visualization alongside real-time data.</li>
+  <li><strong>Satellite integration</strong> — HELSY API for NDVI and water index analysis.</li>
+  <li><strong>Clean architecture</strong> — Feature-based folders, context providers, reusable UI components.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h1 id="s13">13. Development Quick Start</h1>
+
+<h3>Prerequisites</h3>
+<ul>
+  <li>Node.js 20+</li>
+  <li>Python 3.12+</li>
+  <li>MySQL 8+ (optional for demo mode)</li>
+  <li>npm or pnpm</li>
+</ul>
+
+<h3>Setup</h3>
+<pre># 1. Clone the repository
+git clone &lt;repo-url&gt;
+cd mrv_new_interface-main
+
+# 2. Install frontend dependencies
+npm install
+
+# 3. Install backend dependencies
+cd backend
+pip install -r requirements.txt
+cd ..
+
+# 4. Start development servers
+# Terminal 1: Backend
+cd backend && python run.py
+
+# Terminal 2: Frontend
+npm run dev
+
+# 5. Open browser → http://localhost:5173</pre>
+
+<h3>Project Scripts</h3>
+<table>
+  <tr><th>Command</th><th>Description</th></tr>
+  <tr><td><code>npm run dev</code></td><td>Start Vite dev server (hot reload)</td></tr>
+  <tr><td><code>npm run build</code></td><td>Production build to <code>dist/</code></td></tr>
+  <tr><td><code>npm run preview</code></td><td>Preview production build</td></tr>
+  <tr><td><code>npm run lint</code></td><td>Run ESLint on all source files</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h1 id="s14">14. Glossary</h1>
+
+<table>
+  <tr><th>Term</th><th>Definition</th></tr>
+  <tr><td><strong>MRV</strong></td><td>Monitoreo de Recursos Hídricos Virtual — Virtual Water Resources Monitoring</td></tr>
+  <tr><td><strong>Node</strong></td><td>An IoT sensor station deployed at a specific location along the river</td></tr>
+  <tr><td><strong>Reading</strong></td><td>A single data point from a sensor node containing all parameter values</td></tr>
+  <tr><td><strong>Alert</strong></td><td>A notification triggered when a parameter exceeds defined thresholds</td></tr>
+  <tr><td><strong>Crisis Center</strong></td><td>The emergency management dashboard module</td></tr>
+  <tr><td><strong>Risk Gauge</strong></td><td>A visual indicator showing current risk level (0-100%)</td></tr>
+  <tr><td><strong>NDVI</strong></td><td>Normalized Difference Vegetation Index — satellite-derived vegetation health metric</td></tr>
+  <tr><td><strong>HELSY</strong></td><td>A satellite imagery API provider used for remote sensing data</td></tr>
+  <tr><td><strong>JWT</strong></td><td>JSON Web Token — used for API authentication</td></tr>
+  <tr><td><strong>WebSocket</strong></td><td>Protocol for real-time bidirectional communication (future implementation)</td></tr>
+  <tr><td><strong>MQTT</strong></td><td>Lightweight messaging protocol for IoT device communication (future implementation)</td></tr>
+  <tr><td><strong>IDEAM</strong></td><td>Instituto de Hidrología, Meteorología y Estudios Ambientales (Colombia)</td></tr>
+  <tr><td><strong>CORPOCHOCÓ</strong></td><td>Corporación Autónoma Regional para el Desarrollo Sostenible del Chocó</td></tr>
+</table>
+
+<hr>
+
+<p style="text-align:center; color:#666;">
+  <strong>Document Version:</strong> 1.0.0 &nbsp;|&nbsp;
+  <strong>Last Updated:</strong> 2026-05-21 &nbsp;|&nbsp;
+  <strong>Prepared for:</strong> Chocó Hackathon 2025 / Development Team Handoff<br>
+  <em>AI-assisted technical documentation (opencode)</em>
+</p>
+
+</body>
+</html>

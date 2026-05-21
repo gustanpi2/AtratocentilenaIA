@@ -11,6 +11,7 @@ import {
   MdAppRegistration,
   MdHome,
   MdSensors,
+  MdWarning,
 } from "react-icons/md";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
@@ -50,6 +51,16 @@ const AppSidebar: React.FC = () => {
 
   const navItems: NavItem[] = useMemo(() => {
     const items: NavItem[] = [
+      {
+        icon: <MdWarning className="text-red-500" />,
+        name: "Centro de Crisis",
+        subItems: [{ name: "Panel de Crisis", path: "/crisis", icon: <MdWarning /> }],
+      },
+      {
+        icon: <MdSensors />,
+        name: "Seguimiento de Nodos",
+        subItems: [{ name: "Análisis de Nodos", path: "/node-tracking", icon: <MdSensors /> }],
+      },
       {
         icon: <MdHome />,
         name: "Estaciones",
@@ -269,22 +280,14 @@ const AppSidebar: React.FC = () => {
       >
         <Link to="/" aria-label="Inicio">
           {!isSidebarOpen ? (
-            <img src="/images/mrv_logo.png" alt="Logo Compacto" width={48} />
+            <img src="/images/logonew.png" alt="AtratoCentinela AI" width={48} className="rounded" />
           ) : (
-            <>
-              <img
-                className="dark:hidden"
-                src="/images/LOGO-2-0.png"
-                alt="Logo"
-                width={150}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/LOGO-2-0-DARK.png"
-                alt="Logo Dark"
-                width={150}
-              />
-            </>
+            <img
+              src="/images/logonew.png"
+              alt="AtratoCentinela AI"
+              width={150}
+              className="rounded"
+            />
           )}
         </Link>
       </div>

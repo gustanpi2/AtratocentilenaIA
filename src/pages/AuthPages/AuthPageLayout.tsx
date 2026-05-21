@@ -229,7 +229,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="al-panel-content">
             {/* Logo */}
             <Link to="/" className="al-logo-wrap">
-              <img src="/images/mrv_logo.png" alt="MRV Monitor" style={{ height: 44, width: "auto" }} />
+              <img src="/images/logonew.png" alt="AtratoCentinela AI" style={{ height: 44, width: "auto" }} />
             </Link>
 
             {/* Stats */}
@@ -261,7 +261,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {/* Credit */}
             <div className="al-credit">
               <span className="al-credit-dot" />
-              <span>mrvmonitor.com</span>
+              <span>atratocentinela.ai</span>
               <span className="al-credit-dot" />
               <span>Fotografía: Yuver Rengifo</span>
               <span className="al-credit-dot" />

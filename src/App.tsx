@@ -36,6 +36,14 @@ import Videos from "./pages/UiElements/Videos";
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
 
+// Crisis Center
+import { CrisisCenter } from "./modules/crisis-center/CrisisCenter";
+import { AlertBanner } from "./modules/alerts/AlertBanner";
+import { Chatbot } from "./modules/chatbot/Chatbot";
+
+// Node Tracking
+import { NodeTracking } from "./modules/node-tracking/NodeTracking";
+
 // Contexto de autenticación
 import { useAuth } from "./context/AuthContext";
 import Comunas from "./pages/Comunas/Comunas";
@@ -89,13 +97,17 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
+      <AlertBanner />
+      <Chatbot />
       <Routes>
         {/* Rutas con layout principal */}
         <Route element={<AppLayout />}>
           {/* 🌐 Públicas */}
           <Route index element={<Maps />} />
+          <Route path="/crisis" element={<CrisisCenter />} />
           <Route path="/inform" element={<Home />} />
           <Route path="/inform/:estacion" element={<Home />} />
+          <Route path="/node-tracking" element={<NodeTracking />} />
           <Route path="/monitoring/:id" element={<Monitoreo />} />
           <Route path="/monitoring/variables/:id" element={<Variables />} />
           <Route path="/monitoring/variables/detalles/:codigo/:id" element={<Detalles />} />

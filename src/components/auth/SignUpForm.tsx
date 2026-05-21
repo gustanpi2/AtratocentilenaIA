@@ -305,7 +305,7 @@ export default function SignUpForm() {
               Crear cuenta
             </h1>
             <p style={{ margin: 0, fontSize: 13, color: "#9ca3af" }} className="dark:text-slate-600">
-              Únete a mrvmonitor.com
+              Únete a AtratoCentinela AI
             </p>
           </div>
 

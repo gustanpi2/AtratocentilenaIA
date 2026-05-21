@@ -6,8 +6,8 @@ export default function SignUp() {
   return (
     <>
       <PageMeta
-        title="Inicie sesión en mrvmonitor.com"
-        description="Aqui podras inciar iniciar sesión en mrvmonitor.com"
+        title="Crear cuenta — AtratoCentinela AI"
+        description="Crea tu cuenta en AtratoCentinela AI, sistema de monitoreo ambiental del Chocó Biogeográfico"
       />
       <AuthLayout>
         <SignUpForm />

@@ -175,8 +175,7 @@ const AppHeader: React.FC = () => {
 
             {/* Mobile logo */}
             <Link to="/" className="lg:hidden flex-1 flex justify-center">
-              <img className="dark:hidden h-8 w-auto" src="/images/LOGO-2-0.png" alt="Logo" />
-              <img className="hidden dark:block h-8 w-auto" src="/images/logo/logo-dark.svg" alt="Logo oscuro" />
+              <img className="h-8 w-auto" src="/images/logonew.png" alt="AtratoCentinela AI" />
             </Link>
 
             {/* Desktop search bar */}
