@@ -9,6 +9,7 @@ import { PredictionPanel } from "../predictions/PredictionPanel";
 import { EmergencyBroadcast } from "../community/EmergencyBroadcast";
 import { useAlerts } from "../alerts/AlertProvider";
 import { playAlertBeep } from "../alerts/AlertSound";
+import { getStationStatusSummary } from "../../data/stations";
 
 export const CrisisCenter = () => {
   const { criticalAlerts, setCrisisMode } = useAlerts();
@@ -43,6 +44,36 @@ export const CrisisCenter = () => {
             </h2>
           </div>
           <CriticalIndicators />
+        </section>
+
+        {/* Station status summary */}
+        <section>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-1.5 h-7 bg-lime-500 rounded-full" />
+            <h2 className="text-base font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Estado de la red
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {[
+              { label: "En línea", count: getStationStatusSummary().online, color: "#22c55e" },
+              { label: "Sin conexión", count: getStationStatusSummary().offline, color: "#6b7280" },
+              { label: "Modo autónomo", count: getStationStatusSummary().autonomous, color: "#a855f7" },
+              { label: "Críticos", count: getStationStatusSummary().critical, color: "#ef4444" },
+              { label: "Total", count: getStationStatusSummary().total, color: "#84cc16" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
+              >
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: item.color }} />
+                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">{item.label}</span>
+                <span className="text-lg font-bold font-mono" style={{ color: item.color }}>
+                  {item.count}
+                </span>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Map + Side info */}

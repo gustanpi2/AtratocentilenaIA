@@ -57,6 +57,38 @@ def _is_domain_question(question: str) -> bool:
 
 def _build_context_prompt(context: dict) -> str:
     parts = []
+    alerts = context.get("alerts", [])
+    measurements = context.get("latest_measurements", [])
+
+    # Status summary header — explicitly tells the LLM the current state
+    if alerts:
+        critical = [a for a in alerts if a.get("level") == "CRITICAL"]
+        warning = [a for a in alerts if a.get("level") in ("WARNING", "HIGH")]
+        status_parts = []
+        if critical:
+            status_parts.append(f"HAY {len(critical)} ALERTA(S) CRITICA(S) ACTIVA(S)")
+        if warning:
+            status_parts.append(f"HAY {len(warning)} ALERTA(S) PREVENTIVA(S) ACTIVA(S)")
+        status_parts.append("Las siguientes estaciones presentan condiciones anormales:")
+        parts.append("=== ESTADO ACTUAL DEL SISTEMA ===\n" + "\n".join(status_parts))
+    else:
+        parts.append(
+            "=== ESTADO ACTUAL DEL SISTEMA ===\n"
+            "NO HAY ALERTAS ACTIVAS. Todas las estaciones se encuentran en condiciones normales."
+        )
+
+    if measurements:
+        meas_str = "\n".join(
+            f"  - {m['station_name']} | {m['variable_name']}: {m['value']} {m['unit']} "
+            f"(medido: {m['measured_at']})"
+            for m in measurements[:30]
+        )
+        parts.append(f"MEDICIONES RECIENTES (últimas 24h):\n{meas_str}")
+    else:
+        parts.append(
+            "MEDICIONES RECIENTES:\nNo hay mediciones disponibles en este momento. "
+            "Las condiciones del río se consideran estables dentro de rangos normales."
+        )
 
     if context.get("stations"):
         stations_str = "\n".join(
@@ -66,21 +98,13 @@ def _build_context_prompt(context: dict) -> str:
         )
         parts.append(f"ESTACIONES DISPONIBLES:\n{stations_str}")
 
-    if context.get("latest_measurements"):
-        meas_str = "\n".join(
-            f"  - {m['station_name']} | {m['variable_name']}: {m['value']} {m['unit']} "
-            f"(medido: {m['measured_at']})"
-            for m in context["latest_measurements"][:30]
-        )
-        parts.append(f"MEDICIONES RECIENTES (últimas 24h):\n{meas_str}")
-
-    if context.get("alerts"):
+    if alerts:
         alerts_str = "\n".join(
             f"  - [{a['level']}] {a['station_name']}: {a['message']} "
             f"({a['triggered_at']})"
-            for a in context["alerts"]
+            for a in alerts
         )
-        parts.append(f"ALERTAS ACTIVAS (últimas 48h):\n{alerts_str}")
+        parts.append(f"DETALLE DE ALERTAS ACTIVAS:\n{alerts_str}")
 
     return "\n\n".join(parts)
 
