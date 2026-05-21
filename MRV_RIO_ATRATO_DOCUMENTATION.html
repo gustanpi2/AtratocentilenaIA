@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MRV Río Atrato — Technical Documentation</title>
+<title>AtratoCentinela AI — Technical Documentation</title>
 <style>
   @page { size: A4; margin: 2.5cm; }
   body {
@@ -56,14 +56,14 @@
 <body>
 
 <div class="cover">
-  <h1>MRV Río Atrato</h1>
+  <h1>AtratoCentinela AI</h1>
   <div class="subtitle">Technical Documentation — Complete System Reference</div>
   <div class="meta">
-    <strong>Project:</strong> Monitoreo de Recursos Hídricos Virtual — Río Atrato<br>
+    <strong>Project:</strong> AtratoCentinela AI — Plataforma de Monitoreo Ambiental del Río Atrato<br>
     <strong>Event:</strong> Chocó Hackathon 2025<br>
     <strong>Tech Stack:</strong> React 19 · Vite 6 · TypeScript 5.7 · Tailwind CSS v4 · FastAPI · MySQL<br>
     <strong>Status:</strong> Frontend functional (demo mode); Backend skeleton with DB connection<br>
-    <strong>Document Version:</strong> 1.0.0 &nbsp;|&nbsp; <strong>Last Updated:</strong> 2026-05-21
+    <strong>Document Version:</strong> 2.0.0 &nbsp;|&nbsp; <strong>Last Updated:</strong> 2026-05-21
   </div>
 </div>
 
@@ -113,7 +113,7 @@
 <!-- ============================================================ -->
 <h1 id="s1">1. Project Overview</h1>
 
-<p><strong>MRV Río Atrato</strong> is a real-time environmental monitoring platform for the Río Atrato river basin in Chocó, Colombia. It integrates satellite imagery, IoT sensor data, and AI-powered predictive analytics to provide government agencies and emergency responders with actionable intelligence on water resources, flood risks, and environmental crises.</p>
+<p><strong>AtratoCentinela AI</strong> (formerly MRV Río Atrato) is a rebranded, visually enhanced real-time environmental monitoring platform for the Río Atrato river basin in Chocó, Colombia. It integrates satellite imagery, IoT sensor data, and AI-powered predictive analytics to provide government agencies and emergency responders with actionable intelligence on water resources, flood risks, and environmental crises. The platform has been fully rebranded from "MRV Río Atrato" to "AtratoCentinela AI", including all logos, titles, metadata, chatbot text, and map overlays.</p>
 
 <h3>Core Objectives</h3>
 <table>
@@ -121,7 +121,7 @@
   <tr><td><strong>Real-time Monitoring</strong></td><td>Visualize water level, flow rate, temperature, pH, turbidity, and rainfall from distributed sensor nodes.</td></tr>
   <tr><td><strong>Crisis Management</strong></td><td>Detect anomalous conditions, issue multi-channel alerts (visual, audible), and coordinate emergency response.</td></tr>
   <tr><td><strong>Predictive Analytics</strong></td><td>Leverage AI/ML models to forecast flooding, drought, and water quality degradation.</td></tr>
-  <tr><td><strong>Geospatial Analysis</strong></td><td>Interactive satellite maps with node overlays, heatmaps, and crisis zone delineation.</td></tr>
+  <tr><td><strong>Geospatial Analysis</strong></td><td>Interactive satellite maps with node overlays, Circle-based risk zones (replacing deprecated HeatmapLayer), and crisis zone delineation.</td></tr>
   <tr><td><strong>Data Export &amp; Reporting</strong></td><td>Download historical readings, generate PDF/CSV reports, and share broadcast messages.</td></tr>
 </table>
 
@@ -182,13 +182,19 @@
 <pre>mrv_new_interface-main/
 │
 ├── public/                          # Static assets (served as-is)
-│   └── mark.svg                     # Favicon / branding
+│   ├── mark.svg                     # Favicon / branding
+│   └── images/
+│       └── logonew.png              # AtratoCentinela AI logo (copied from src/assets/images/)
 │
 ├── src/                             # Frontend source
 │   ├── main.tsx                     # React entry point
 │   ├── App.tsx                      # Root component (RouterProvider)
 │   ├── index.css                    # Tailwind v4 + global styles
 │   ├── vite-env.d.ts                # Vite type declarations
+│   │
+│   ├── assets/                      # Static assets
+│   │   └── images/
+│   │       └── logonew.png          # Source AtratoCentinela AI logo
 │   │
 │   ├── auth/                        # Authentication module
 │   │   ├── AuthContext.tsx           # Auth state provider
@@ -208,6 +214,10 @@
 │   ├── pages/                       # Page-level feature modules
 │   │   ├── Maps/                    # Interactive satellite map
 │   │   │   └── GoogleMapComponent.tsx
+│   │   ├── AuthPages/               # Authentication pages
+│   │   │   ├── AuthPageLayout.tsx   # Auth layout with logo
+│   │   │   ├── SignIn.tsx
+│   │   │   └── SignUp.tsx
 │   │   ├── Dashboard.tsx            # Main dashboard
 │   │   ├── Monitoring.tsx           # Real-time monitoring
 │   │   ├── Variables.tsx            # Variable explorer
@@ -231,7 +241,10 @@
 │   │   │   ├── HistoricalCharts.tsx # Time-series charts
 │   │   │   ├── ReadingsTable.tsx    # Tabular data view
 │   │   │   └── ExportTools.tsx      # CSV/PDF export
-│   │   ├── Chatbot.tsx              # AI assistant chat
+│   │   ├── chatbot/                 # AI assistant chat
+│   │   │   ├── Chatbot.tsx          # Chatbot container
+│   │   │   ├── ChatbotMessage.tsx   # Message bubble
+│   │   │   └── ChatbotInput.tsx     # Input field
 │   │   ├── UserProfile.tsx          # User settings
 │   │   ├── Ecommerce.tsx            # Placeholder store
 │   │   └── Notifications.tsx        # Notification center
@@ -253,6 +266,8 @@
 │   │   │   └── Table.tsx            # Data table
 │   │   ├── chart/                   # Chart components
 │   │   │   └── AreaChart.tsx        # Recharts wrapper
+│   │   ├── auth/                    # Auth sub-components
+│   │   │   └── SignUpForm.tsx       # Registration form
 │   │   ├── form/                    # Form components
 │   │   │   └── LoginForm.tsx        # Login form
 │   │   ├── header/                  # Header widgets
@@ -407,9 +422,14 @@
 <p><strong>File:</strong> <code>src/pages/Maps/GoogleMapComponent.tsx</code></p>
 <ul>
   <li>Renders a full-page interactive map using <code>@react-google-maps/api</code>.</li>
-  <li>Shows sensor node markers with color-coded status (normal/warning/critical).</li>
-  <li>Clicking a marker opens an <code>InfoWindow</code> with node name, latest reading, and status.</li>
-  <li>Crisis zones are overlaid as polygons/circles when alerts are active.</li>
+  <li>Shows sensor node markers with custom SVG icons — color-coded by status (normal/warning/critical).</li>
+  <li>Critical-risk nodes feature a pulsing animation (CSS keyframes) for immediate visual attention.</li>
+  <li>Clicking a marker opens an enhanced <code>InfoWindow</code> with node name, latest reading, status badge, and risk level.</li>
+  <li>Crisis risk zones are rendered as <code>google.maps.Circle</code> overlays (replaces the deprecated <code>HeatmapLayer</code> from the <code>visualization</code> library). Circles are color-coded by risk severity (red/orange/green) with semi-transparent fill and proportional radius (2-5km).</li>
+  <li>Includes a risk legend panel explaining the color coding.</li>
+  <li>Includes an alert status indicator bar at the top.</li>
+  <li>The <code>visualization</code> library is no longer loaded (HeatmapLayer fully removed).</li>
+  <li>Classic <code>google.maps.Marker</code> is used (not AdvancedMarkerElement) to maintain broad mobile compatibility.</li>
 </ul>
 
 <h3>4.5.3 Monitoring</h3>
@@ -430,6 +450,8 @@
 
 <h3>4.5.5 Crisis Center</h3>
 <p><strong>Files:</strong> <code>src/pages/CrisisCenter/</code> (11 files)</p>
+<p><span class="badge badge-blue">New</span> <strong>Visual improvements applied:</strong> enlarged layout (max-w-[1440px]), increased map height (580-640px), bigger cards and section titles, enhanced legibility with more padding and spacing throughout. Added missing sensor metadata for 4 variables (pluviómetro, anemómetro, higrómetro, modelo IA PR-7).</p>
+<p><span class="badge badge-blue">Fixed</span> The <code>EmergencyMap.tsx</code> previously used <code>HeatmapLayer</code> from <code>@react-google-maps/api</code> with the <code>visualization</code> library — this has been replaced with <code>&lt;Circle&gt;</code> components (one per risk zone, radius proportional to weight, color-coded by severity). The <code>visualization</code> library is no longer requested. Markers were enhanced with larger scales and white stroke for better visibility.</p>
 <p>The Crisis Center is the most complex module — a full emergency response dashboard.</p>
 
 <pre>CrisisCenter
@@ -458,6 +480,7 @@
 
 <h3>4.5.6 Node Tracking</h3>
 <p><strong>Files:</strong> <code>src/pages/NodeTracking/</code> (6 files)</p>
+<p><span class="badge badge-blue">Visual improvements applied across all 6 files:</span> wider layout (max-w-[1440px]), bigger form controls (selects: h-12, text-base), larger table rows and headers (text-sm, more padding), taller charts (480px), bigger buttons and icons, expanded spacing and padding throughout for improved legibility.</p>
 <ul>
   <li><strong>FilterPanel</strong> — Status filter, parameter filter, date range picker, search.</li>
   <li><strong>NodeInfoCard</strong> — Per-node summary: name, location, status badge, latest reading.</li>
@@ -586,7 +609,7 @@ interface Alert {
 <h2 id="s5-1">5.1 FastAPI Application</h2>
 <p><strong>File:</strong> <code>backend/main.py</code></p>
 <ul>
-  <li>Creates FastAPI app with title "MRV Río Atrato API".</li>
+  <li>Creates FastAPI app with title "AtratoCentinela AI API".</li>
   <li>Configures CORS middleware (allows frontend origin).</li>
   <li>Includes routers: <code>auth.router</code>, <code>nodes.router</code>, <code>readings.router</code>.</li>
   <li>Root health-check endpoint: <code>GET /</code> → <code>{"status": "ok", "version": "1.0.0"}</code>.</li>
@@ -915,6 +938,17 @@ python run.py      # → http://localhost:8000
   <li>✅ Authentication context with role-based UI</li>
 </ul>
 
+<h3>Phase 1b — Rebranding &amp; Visual Polish <span class="badge badge-green">✅ Complete</span></h3>
+<ul>
+  <li>✅ Full system rebrand from "MRV Río Atrato" to "AtratoCentinela AI" — all logos, titles, metadata, chatbot text, and map overlays updated (18 files)</li>
+  <li>✅ Logo replaced with <code>src/assets/images/logonew.png</code> (also copied to <code>public/images/</code> for uniform URL access)</li>
+  <li>✅ Crisis Center visual boost — enlarged layout, fonts, cards, map height; added missing sensor metadata for 4 variables</li>
+  <li>✅ Node Tracking visual boost across all 6 files — wider layout, bigger controls, taller charts, more padding</li>
+  <li>✅ Fixed Google Maps <code>HeatmapLayer</code> deprecation in both <code>EmergencyMap.tsx</code> and <code>GoogleMapComponent.tsx</code> — replaced with <code>google.maps.Circle</code> overlays, removed <code>visualization</code> library dependency</li>
+  <li>✅ Added custom SVG marker icons with pulsing animation for critical-risk stations</li>
+  <li>✅ Added risk legend panel, alert status indicator bar, and enhanced InfoWindow in GoogleMapComponent</li>
+</ul>
+
 <h3>Phase 2 — Backend Integration <span class="badge badge-orange">🔄 Next</span></h3>
 <ul>
   <li>☐ Implement full CRUD for all API endpoints</li>
@@ -970,7 +1004,7 @@ python run.py      # → http://localhost:8000
 
 <h3>Elevator Pitch (30 seconds)</h3>
 <blockquote>
-"MRV Río Atrato is a real-time environmental monitoring platform that combines satellite imagery, IoT sensors, and AI to detect and predict water-related crises in the Río Atrato basin. Our dashboard gives emergency responders instant visibility into flood risks, water quality, and critical alerts — turning raw data into actionable decisions."
+"AtratoCentinela AI is a real-time environmental monitoring platform that combines satellite imagery, IoT sensors, and AI to detect and predict water-related crises in the Río Atrato basin. Our dashboard gives emergency responders instant visibility into flood risks, water quality, and critical alerts — turning raw data into actionable decisions."
 </blockquote>
 
 <h3>Demo Flow (5 minutes)</h3>
@@ -994,7 +1028,7 @@ python run.py      # → http://localhost:8000
   <li><strong>Predictive capability:</strong> "AI models forecast flood risk 72 hours in advance, giving communities time to prepare."</li>
   <li><strong>Multi-modal alerts:</strong> "We support visual banners, audible sirens, SMS, and push notifications — ensuring no alert is missed."</li>
   <li><strong>Open architecture:</strong> "Built on React + FastAPI, deployable anywhere, extensible via REST API."</li>
-  <li><strong>Community impact:</strong> "Río Atrato communities face annual flooding that affects 50,000+ people. MRV provides early warning that saves lives."</li>
+  <li><strong>Community impact:</strong> "Río Atrato communities face annual flooding that affects 50,000+ people. AtratoCentinela AI provides early warning that saves lives."</li>
 </ul>
 
 <h3>Technical Differentiators</h3>
@@ -1053,7 +1087,8 @@ npm run dev
 
 <table>
   <tr><th>Term</th><th>Definition</th></tr>
-  <tr><td><strong>MRV</strong></td><td>Monitoreo de Recursos Hídricos Virtual — Virtual Water Resources Monitoring</td></tr>
+  <tr><td><strong>AtratoCentinela AI</strong></td><td>Rebranded platform name (formerly MRV Río Atrato). Spanish: "Atrato Sentinel AI" — AI-powered monitoring for the Río Atrato basin.</td></tr>
+  <tr><td><strong>MRV</strong></td><td>Monitoreo de Recursos Hídricos Virtual — Virtual Water Resources Monitoring (legacy name)</td></tr>
   <tr><td><strong>Node</strong></td><td>An IoT sensor station deployed at a specific location along the river</td></tr>
   <tr><td><strong>Reading</strong></td><td>A single data point from a sensor node containing all parameter values</td></tr>
   <tr><td><strong>Alert</strong></td><td>A notification triggered when a parameter exceeds defined thresholds</td></tr>
@@ -1071,7 +1106,7 @@ npm run dev
 <hr>
 
 <p style="text-align:center; color:#666;">
-  <strong>Document Version:</strong> 1.0.0 &nbsp;|&nbsp;
+  <strong>Document Version:</strong> 2.0.0 &nbsp;|&nbsp;
   <strong>Last Updated:</strong> 2026-05-21 &nbsp;|&nbsp;
   <strong>Prepared for:</strong> Chocó Hackathon 2025 / Development Team Handoff<br>
   <em>AI-assisted technical documentation (opencode)</em>

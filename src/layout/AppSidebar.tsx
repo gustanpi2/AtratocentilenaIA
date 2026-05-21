@@ -12,6 +12,7 @@ import {
   MdHome,
   MdSensors,
   MdWarning,
+  MdSmartToy,
 } from "react-icons/md";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
@@ -60,6 +61,11 @@ const AppSidebar: React.FC = () => {
         icon: <MdSensors />,
         name: "Seguimiento de Nodos",
         subItems: [{ name: "Análisis de Nodos", path: "/node-tracking", icon: <MdSensors /> }],
+      },
+      {
+        icon: <MdSmartToy className="text-lime-500" />,
+        name: "Agente Centinela AI",
+        subItems: [{ name: "Consola del Agente", path: "/agent", icon: <MdSmartToy /> }],
       },
       {
         icon: <MdHome />,

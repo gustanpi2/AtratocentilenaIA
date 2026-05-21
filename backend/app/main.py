@@ -7,12 +7,13 @@ from app.database.base import Base
 from app.routes import station_routes
 from app.routes import measurement_routes
 from app.routes import alert_routes
+from app.agents import router as agent_router
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Atrato Monitoring API",
-    version="1.0.0"
+    title="AtratoCentinela AI API",
+    version="2.0.0"
 )
 
 app.add_middleware(
@@ -26,6 +27,7 @@ app.add_middleware(
 app.include_router(station_routes.router)
 app.include_router(measurement_routes.router)
 app.include_router(alert_routes.router)
+app.include_router(agent_router.router)
 
 @app.get("/")
 def root():

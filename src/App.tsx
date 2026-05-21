@@ -40,6 +40,8 @@ import BarChart from "./pages/Charts/BarChart";
 import { CrisisCenter } from "./modules/crisis-center/CrisisCenter";
 import { AlertBanner } from "./modules/alerts/AlertBanner";
 import { Chatbot } from "./modules/chatbot/Chatbot";
+import AgentPage from "./pages/Agent/AgentPage";
+import { AgentProvider } from "./modules/agent/AgentContext";
 
 // Node Tracking
 import { NodeTracking } from "./modules/node-tracking/NodeTracking";
@@ -98,8 +100,9 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <AlertBanner />
-      <Chatbot />
-      <Routes>
+      <AgentProvider>
+        <Chatbot />
+        <Routes>
         {/* Rutas con layout principal */}
         <Route element={<AppLayout />}>
           {/* 🌐 Públicas */}
@@ -108,6 +111,7 @@ export default function App() {
           <Route path="/inform" element={<Home />} />
           <Route path="/inform/:estacion" element={<Home />} />
           <Route path="/node-tracking" element={<NodeTracking />} />
+          <Route path="/agent" element={<AgentPage />} />
           <Route path="/monitoring/:id" element={<Monitoreo />} />
           <Route path="/monitoring/variables/:id" element={<Variables />} />
           <Route path="/monitoring/variables/detalles/:codigo/:id" element={<Detalles />} />
@@ -147,6 +151,7 @@ export default function App() {
         {/* ❌ 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </AgentProvider>
     </Router>
   );
 }
