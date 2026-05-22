@@ -1,12 +1,11 @@
 // @ts-nocheck
 import { useEffect, useState, useCallback, useMemo } from "react";
-import axios from "axios";
+import ApiHelsy from "../../service/ApiHelsy";
 import {
   FaSun, FaVolumeUp, FaTemperatureHigh, FaWater,
   FaArrowUp, FaArrowDown, FaSmile, FaMeh, FaFrown,
   FaDownload, FaBell, FaBellSlash, FaSync,
   FaChartLine, FaTable, FaInfoCircle, FaTimes,
-  FaCheck, FaExclamationTriangle,
 } from "react-icons/fa";
 import { GiChemicalDrop, GiDustCloud } from "react-icons/gi";
 import { MdCo2, MdAir } from "react-icons/md";
@@ -164,7 +163,7 @@ const Calidad = ({ estacion }: Props) => {
   const fetchData = useCallback(async () => {
     try {
       const reqs = SENSORES.map(s =>
-        axios.get(`https://api.helsy.com.co/api/previewDetailCharts/${estacion.id}/${s.code}`)
+        ApiHelsy.get(`previewDetailCharts/${estacion.id}/${s.code}`)
       );
       const res = await Promise.all(reqs);
       const values: SensorData = {};
@@ -172,13 +171,15 @@ const Calidad = ({ estacion }: Props) => {
         const m = r.data?.[0]?.lectura?.match(/([\d.]+)/);
         values[SENSORES[i].key] = m ? parseFloat(m[0]) : 0;
       });
-      setPrevData(data);
-      setData(values);
+      setData(prev => {
+        setPrevData(prev);
+        return values;
+      });
       setLastUpdate(new Date());
     } finally {
       setLoading(false);
     }
-  }, [data, estacion.id]);
+  }, [estacion.id]);
 
   /* Fetch histórico */
   const fetchHistory = async (sensorCode: string) => {
@@ -186,8 +187,8 @@ const Calidad = ({ estacion }: Props) => {
     setHistory([]);
     setStats(null);
     try {
-      const res = await axios.get(
-        `https://api.helsy.com.co/api/previewDetailCharts/${estacion.id}/${sensorCode}`
+      const res = await ApiHelsy.get(
+        `previewDetailCharts/${estacion.id}/${sensorCode}`
       );
       const formatted = res.data.map((i: any) => {
         const m = i.lectura?.match(/([\d.]+)/);
@@ -304,14 +305,14 @@ const Calidad = ({ estacion }: Props) => {
         <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:20, alignItems:"center" }}>
           {[
             { k:"all",      label:"Todos" },
-            { k:"good",     label:"Buena",   icon: <FaCheck style={{fontSize:11}} /> },
-            { k:"moderate", label:"Moderada" },
-            { k:"poor",     label:"Mala",    icon: <FaArrowUp style={{fontSize:11}} /> },
-            { k:"danger",   label:"Peligrosa", icon: <FaExclamationTriangle style={{fontSize:11}} /> },
-            { k:"alerts",   label:"Alertas", icon: <FaBell style={{fontSize:11}} /> },
+            { k:"good",     label:"✓ Buena" },
+            { k:"moderate", label:"◎ Moderada" },
+            { k:"poor",     label:"▲ Mala" },
+            { k:"danger",   label:"⚠ Peligrosa" },
+            { k:"alerts",   label:"🔔 Alertas" },
           ].map(f => (
             <button key={f.k} className={`flt-btn ${filterKey===f.k?"active":""}`} onClick={() => setFilterKey(f.k)}>
-              {f.icon}{f.icon ? "\u00A0" : ""}{f.label}
+              {f.label}
             </button>
           ))}
           <button className="ico-btn" onClick={fetchData} title="Actualizar ahora" style={{ marginLeft:"auto" }}>
@@ -397,8 +398,8 @@ const Calidad = ({ estacion }: Props) => {
 
                   {/* Alerta disparada */}
                   {alertFired && (
-                    <div style={{ marginTop:8, fontSize:10, fontFamily:LOCAL.fontM, color:LOCAL.warn, background:"rgba(250,204,21,0.08)", border:"1px solid rgba(250,204,21,0.2)", borderRadius:6, padding:"3px 8px" }}>
-                      <FaExclamationTriangle style={{fontSize:10, marginRight:4}} />Umbral superado
+                    <div style={{ marginTop:8, fontSize:10, fontFamily:T.fontM, color:T.warn, background:"rgba(250,204,21,0.08)", border:"1px solid rgba(250,204,21,0.2)", borderRadius:6, padding:"3px 8px" }}>
+                      ⚠ Umbral superado
                     </div>
                   )}
                 </div>

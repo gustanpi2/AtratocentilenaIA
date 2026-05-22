@@ -48,12 +48,12 @@ const MetricCard = ({
       fontSize: 11, fontWeight: 700,
       letterSpacing: "0.08em", textTransform: "uppercase",
       color: "#9ca3af", fontFamily: "'JetBrains Mono', monospace",
-    }} className="dark:text-slate-600">
+    }} className="dark:text-slate-400">
       {label}
     </p>
     {sublabel && (
       <p style={{ margin: "0 0 6px", fontSize: 10, color: "#d1d5db", fontFamily: "'JetBrains Mono', monospace" }}
-        className="dark:text-slate-800">
+        className="dark:text-slate-500">
         {sublabel}
       </p>
     )}
@@ -62,8 +62,8 @@ const MetricCard = ({
       <p style={{
         margin: 0, fontSize: 28, fontWeight: 800,
         fontFamily: "'JetBrains Mono', monospace",
-        letterSpacing: "-0.02em", color: "#111827", lineHeight: 1,
-      }} className="dark:text-white">
+        letterSpacing: "-0.02em", lineHeight: 1,
+      }} className="text-gray-900 dark:text-white">
         {loading
           ? <span className="em2-shimmer" style={{ width: 90, height: 28, display: "inline-block", borderRadius: 8 }} />
           : value ?? <span style={{ fontSize: 14, color: "#d1d5db" }}>—</span>
@@ -81,7 +81,7 @@ const MetricCard = ({
           animation: "em2-blink 2s ease-in-out infinite",
         }} />
         <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: "#9ca3af" }}
-          className="dark:text-slate-700">
+          className="dark:text-slate-400">
           Actualización en tiempo real
         </span>
       </div>
@@ -163,24 +163,28 @@ export default function EnvironmentalMetrics2({ estacion }: Props) {
       `}</style>
 
       <div className="em2-grid">
-        <MetricCard
-          icon={<FaWind size={20} />}
-          iconBg="#f0fdf4" iconColor="#22c55e"
-          label="Monóxido de carbono"
-          sublabel="µg/m³"
-          value={monoxidoData}
-          loading={loading}
-        />
-        <MetricCard
-          icon={<WiBarometer size={26} />}
-          iconBg="#faf5ff" iconColor="#a855f7"
-          label="Presión barométrica"
-          sublabel="bar"
-          value={presionData}
-          diff={presionDiff}
-          diffUnit=" bar"
-          loading={loading}
-        />
+        {(loading || monoxidoData !== null) && (
+          <MetricCard
+            icon={<FaWind size={20} />}
+            iconBg="#f0fdf4" iconColor="#22c55e"
+            label="Monóxido de carbono"
+            sublabel="µg/m³"
+            value={monoxidoData}
+            loading={loading}
+          />
+        )}
+        {(loading || presionData !== null) && (
+          <MetricCard
+            icon={<WiBarometer size={26} />}
+            iconBg="#faf5ff" iconColor="#a855f7"
+            label="Presión barométrica"
+            sublabel="bar"
+            value={presionData}
+            diff={presionDiff}
+            diffUnit=" bar"
+            loading={loading}
+          />
+        )}
       </div>
     </>
   );

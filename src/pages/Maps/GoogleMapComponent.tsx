@@ -277,7 +277,7 @@
                       lat: safeParse(location.lat),
                       lng: safeParse(location.lng, true) + offset * Math.sin(angle),
                     }}
-                    icon={getStationStatusIcon(location.nombre) || { url: "/atratocentinela_logo.png", scaledSize: new window.google.maps.Size(40, 40) }}
+                    icon={getStationStatusIcon(location.nombre) || { url: "/favicon1.png", scaledSize: new window.google.maps.Size(40, 40) }}
                     onClick={() => handleMarkerClick(location)}
                   />
                 );

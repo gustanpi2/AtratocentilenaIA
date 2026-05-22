@@ -7,15 +7,12 @@ import {
   FaTrashAlt,
   FaEdit,
   FaTimes,
-  FaExclamationTriangle,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaBell,
 } from "react-icons/fa";
-import toast from "react-hot-toast";
+import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
-import { apiRest } from "../service/api";
+import ApiRest from "../service/ApiRest";
 import { Modal } from "../components/ui/modal";
+import "react-toastify/dist/ReactToastify.css";
 import "@sweetalert2/theme-dark/dark.css";
 
 export default function SensoresPage() {
@@ -117,19 +114,19 @@ export default function SensoresPage() {
       newSensor.tipo_sensor === 0 ||
       newSensor.grafico === 0
     ) {
-      toast.error(<><FaExclamationTriangle style={{marginRight:6}} />Todos los campos son obligatorios.</>);
+      toast.error("⚠️ Todos los campos son obligatorios.");
       return;
     }
 
     try {
       const res = await ApiRest.post("/add/sensor", newSensor);
       if (res.data.success) {
-        toast.success(<><FaCheckCircle style={{marginRight:6}} />Sensor registrado correctamente.</>);
+        toast.success("✅ Sensor registrado correctamente.");
         fetchSensores();
         closeModal();
-      } else toast.error(<><FaTimesCircle style={{marginRight:6}} />{res.data.message}</>);
+      } else toast.error("❌ " + res.data.message);
     } catch {
-      toast.error(<><FaBell style={{marginRight:6}} />Error al registrar el sensor.</>);
+      toast.error("🚨 Error al registrar el sensor.");
     }
   };
 

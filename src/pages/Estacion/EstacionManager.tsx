@@ -256,14 +256,14 @@ export const EstacionManager: React.FC = () => {
           display: -webkit-box; -webkit-line-clamp: 2;
           -webkit-box-orient: vertical; overflow: hidden;
         }
-        .dark .em-desc { color: #334155; }
+        .dark .em-desc { color: #94a3b8; }
 
         .em-coords {
           display: flex; align-items: center; gap: 6px;
           font-family: 'JetBrains Mono', monospace;
           font-size: 10px; color: #9ca3af; margin-bottom: 14px;
         }
-        .dark .em-coords { color: #1e293b; }
+        .dark .em-coords { color: #64748b; }
 
         .em-badge {
           display: inline-flex; align-items: center; gap: 5px;
@@ -294,7 +294,7 @@ export const EstacionManager: React.FC = () => {
           letter-spacing: 0.08em; text-transform: uppercase;
           color: #6b7280; margin-bottom: 6px;
         }
-        .dark .em-label { color: #334155; }
+        .dark .em-label { color: #cbd5e1; }
 
         /* Table */
         .em-table { width: 100%; border-collapse: collapse; }
@@ -306,7 +306,7 @@ export const EstacionManager: React.FC = () => {
           color: #9ca3af; background: #f9fafb;
           border-bottom: 1px solid #f0f0f0;
         }
-        .dark .em-th { background: #0f172a; color: #334155; border-bottom-color: #1e293b; }
+        .dark .em-th { background: #0f172a; color: #94a3b8; border-bottom-color: #1e293b; }
         .em-td {
           padding: 12px 16px;
           font-size: 13.5px; color: #374151;
@@ -340,7 +340,7 @@ export const EstacionManager: React.FC = () => {
           transition: all 0.15s;
         }
         .em-btn-ghost:hover { border-color: #86efac; color: #16a34a; background: #f0fdf4; }
-        .dark .em-btn-ghost { border-color: #1e293b; color: #334155; }
+        .dark .em-btn-ghost { border-color: #1e293b; color: #cbd5e1; }
         .dark .em-btn-ghost:hover { border-color: rgba(132,204,22,0.3); color: #84cc16; background: rgba(132,204,22,0.06); }
 
         .em-btn-outline-green {
@@ -464,7 +464,7 @@ export const EstacionManager: React.FC = () => {
         <Modal
           isOpen={isOpenSensors}
           onClose={closeSensorModal}
-          className="max-w-4xl p-0 rounded-2xl overflow-hidden bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 shadow-2xl"
+          className="max-w-4xl p-0 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 shadow-2xl"
         >
           {selectedEstacion && (() => {
             const cfg   = TIPO_CONFIG[selectedEstacion.id_tipo_estacion];
@@ -605,7 +605,7 @@ export const EstacionManager: React.FC = () => {
         <Modal
           isOpen={isEditOpen}
           onClose={() => setIsEditOpen(false)}
-          className="max-w-md p-0 rounded-2xl overflow-hidden bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 shadow-2xl"
+          className="max-w-md p-0 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 shadow-2xl"
         >
           {estacionAEditar && (
             <div className="em-root">

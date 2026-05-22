@@ -9,7 +9,7 @@ interface CardProps {
   miniGraph?: boolean;
 }
 
-const Card = ({ title, value, unit, icon, color = "text-gray-800", miniGraph = false }: CardProps) => {
+const Card = ({ title, value, unit, icon, color = "text-gray-800 dark:text-white", miniGraph = false }: CardProps) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition-all p-4 flex flex-col justify-between h-36">
       <div className="flex justify-between items-center">

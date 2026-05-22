@@ -37,6 +37,8 @@
     "framer-motion": "^12.23.26",
     "highcharts": "^12.2.0",
     "highcharts-react-official": "^3.2.2",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "lexical": "^0.38.2",
     "lucide-react": "^0.511.0",
     "react": "^19.0.0",

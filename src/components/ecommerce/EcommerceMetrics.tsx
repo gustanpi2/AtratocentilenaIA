@@ -51,7 +51,7 @@ const MetricCard = ({
       fontSize: 11, fontWeight: 700,
       letterSpacing: "0.08em", textTransform: "uppercase",
       color: "#9ca3af", fontFamily: "'JetBrains Mono', monospace",
-    }} className="dark:text-slate-600">
+    }} className="dark:text-slate-400">
       {label}
     </p>
 
@@ -60,8 +60,8 @@ const MetricCard = ({
       <p style={{
         margin: 0, fontSize: 32, fontWeight: 800,
         fontFamily: "'JetBrains Mono', monospace",
-        letterSpacing: "-0.03em", color: "#111827", lineHeight: 1,
-      }} className="dark:text-white">
+        letterSpacing: "-0.03em", lineHeight: 1,
+      }} className="text-gray-900 dark:text-white">
         {loading
           ? <span className="em-shimmer" style={{ width: 100, height: 32, display: "inline-block", borderRadius: 8 }} />
           : value !== null
@@ -82,7 +82,7 @@ const MetricCard = ({
           animation: "em-blink 2s ease-in-out infinite",
         }} />
         <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: "#9ca3af" }}
-          className="dark:text-slate-700">
+          className="dark:text-slate-400">
           Actualización en tiempo real
         </span>
       </div>
@@ -161,22 +161,26 @@ export default function EnvironmentalMetrics({ estacion }: Props) {
       `}</style>
 
       <div className="em-metrics-grid">
-        <MetricCard
-          icon={<FaTemperatureHigh size={20} />}
-          iconBg="#fef2f2" iconColor="#ef4444"
-          label="Temperatura"
-          value={tempData} unit="°C"
-          diff={tempDiff} diffUnit="°C"
-          loading={loading}
-        />
-        <MetricCard
-          icon={<FaWater size={20} />}
-          iconBg="#eff6ff" iconColor="#3b82f6"
-          label="Humedad relativa"
-          value={humData} unit="%"
-          diff={humDiff} diffUnit="%"
-          loading={loading}
-        />
+        {(loading || tempData !== null) && (
+          <MetricCard
+            icon={<FaTemperatureHigh size={20} />}
+            iconBg="#fef2f2" iconColor="#ef4444"
+            label="Temperatura"
+            value={tempData} unit="°C"
+            diff={tempDiff} diffUnit="°C"
+            loading={loading}
+          />
+        )}
+        {(loading || humData !== null) && (
+          <MetricCard
+            icon={<FaWater size={20} />}
+            iconBg="#eff6ff" iconColor="#3b82f6"
+            label="Humedad relativa"
+            value={humData} unit="%"
+            diff={humDiff} diffUnit="%"
+            loading={loading}
+          />
+        )}
       </div>
     </>
   );

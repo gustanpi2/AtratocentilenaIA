@@ -1,4 +1,3 @@
-// @ts-nocheck
 import PageMeta from "../../components/common/PageMeta";
 import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
 import MonthlyTarget from "../../components/charts/highcharts/MonthlyTarget";
@@ -13,7 +12,7 @@ interface Estacion {
 }
 type Props = { estacion: Estacion };
 
-export const Meteorológico = ({ estacion }: Props) => {
+export const Hidrológico = ({ estacion }: Props) => {
   const idEstacion = estacion.estacion_mrv > 0 ? estacion.estacion_mrv : estacion.id;
 
   return (
@@ -68,7 +67,7 @@ export const Meteorológico = ({ estacion }: Props) => {
         .dark .met-section-label { color: #64748b; }
       `}</style>
 
-      <PageMeta title="Monitoreo Meteorológico" description="Panel de monitoreo en tiempo real de la estación." />
+      <PageMeta title="Monitoreo Hidrológico" description="Panel de monitoreo en tiempo real de la estación hídrica." />
 
       <div className="met-root">
         {/* Page header */}
@@ -108,20 +107,20 @@ export const Meteorológico = ({ estacion }: Props) => {
               <EcommerceMetrics estacion={idEstacion} />
             </div>
             <div>
-              <p className="met-section-label">Calidad del aire</p>
+              <p className="met-section-label">Calidad del agua y otros</p>
               <EnvironmentalMetrics2 estacion={idEstacion} />
             </div>
           </div>
 
           {/* Right column */}
           <div className="met-right">
-            <p className="met-section-label">Velocidad del viento</p>
+            <p className="met-section-label">Caudal / Flujo</p>
             <MonthlyTarget estacion={idEstacion} />
           </div>
 
           {/* Full-width chart */}
           <div className="met-full">
-            <p className="met-section-label">Precipitación</p>
+            <p className="met-section-label">Nivel del Río</p>
             <RainfallChart estacion={idEstacion} />
           </div>
         </div>

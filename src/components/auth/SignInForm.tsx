@@ -212,8 +212,7 @@ export default function SignInForm() {
           {/* Avatar + header */}
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div className="si-avatar">
-              <img src="/images/logonew.png" alt="AtratoCentinela AI" style={{ width: 36, height: 36, objectFit: "contain" }} className="dark:hidden" />
-              <img src="/images/LOGO-2-0-DARK.png" alt="AtratoCentinela AI" style={{ width: 36, height: 36, objectFit: "contain" }} className="hidden dark:block" />
+              <img src="/favicon1.png" alt="AtratoCentinela AI" style={{ width: 36, height: 36, objectFit: "contain" }} />
             </div>
             <h1 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 800, color: "#111827", letterSpacing: "-0.02em" }}
               className="dark:text-white">

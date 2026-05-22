@@ -12,6 +12,10 @@ import {
   ChartData,
   ChartOptions,
 } from "chart.js";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { VARIABLES } from "../../data/mockData";
+import toast from "react-hot-toast";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Filler);
 
@@ -145,6 +149,59 @@ const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ data, code }) =
     return () => observer.disconnect();
   }, []);
 
+  const [exportLoading, setExportLoading] = useState<string | null>(null);
+
+  const handleExportCSV = () => {
+    setExportLoading("csv");
+    try {
+      if (data.length === 0) {
+        toast.error("No hay datos para exportar");
+        setExportLoading(null);
+        return;
+      }
+      const headers = ["Fecha", "Hora", "Lectura (Raw)"];
+      const csvContent = [
+        headers.join(","),
+        ...data.map(r => `${r.fecha},${r.hora},${r.lectura}`)
+      ].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Reporte_TiempoReal_${code}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success(`Exportado a CSV`);
+    } catch (e) {
+      toast.error("Error al exportar");
+    }
+    setExportLoading(null);
+  };
+
+  const handleExportPDF = () => {
+    setExportLoading("pdf");
+    try {
+      if (data.length === 0) {
+        toast.error("No hay datos para exportar");
+        setExportLoading(null);
+        return;
+      }
+      const doc = new jsPDF();
+      doc.text(`Reporte de Tiempo Real - Variable: ${code}`, 14, 15);
+      autoTable(doc, {
+        startY: 25,
+        head: [["Fecha", "Hora", "Lectura (Raw)"]],
+        body: data.map(r => [r.fecha, r.hora, r.lectura]),
+      });
+      doc.save(`Reporte_TiempoReal_${code}.pdf`);
+      toast.success(`Exportado a PDF`);
+    } catch (e) {
+      toast.error("Error al exportar");
+    }
+    setExportLoading(null);
+  };
+
   // Load fonts
   useEffect(() => {
     if (!document.querySelector('link[href*="DM+Sans"]')) {
@@ -195,6 +252,10 @@ const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ data, code }) =
   const trend: "up" | "down" | "neutral" =
     last > prev ? "up" : last < prev ? "down" : "neutral";
 
+  const variableDef = VARIABLES.find(v => v.id === code || v.name.toLowerCase().includes(varName.toLowerCase()) || (code === "V1" && v.id === "V10"));
+  const threshold = variableDef?.threshold || (max * 0.8);
+  const critical = variableDef?.critical || (max * 0.95);
+
   const chartData: ChartData<"line"> = {
     labels: filteredHoras,
     datasets: [
@@ -211,6 +272,24 @@ const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ data, code }) =
         pointBorderWidth: 1.5,
         borderWidth: 2,
         fill: { target: "origin", above: isDark ? "rgba(132,204,22,0.06)" : "rgba(132,204,22,0.07)" },
+      },
+      {
+        label: "Umbral preventivo",
+        data: Array(filteredHoras.length).fill(threshold),
+        borderColor: "#f59e0b",
+        borderDash: [6, 4],
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: false,
+      },
+      {
+        label: "Umbral crítico",
+        data: Array(filteredHoras.length).fill(critical),
+        borderColor: "#ef4444",
+        borderDash: [4, 3],
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: false,
       },
     ],
   };
@@ -232,7 +311,12 @@ const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ data, code }) =
         titleFont: { family: T.fontMono, size: 11 },
         bodyFont: { family: T.fontSans, size: 12 },
         callbacks: {
-          label: (ctx) => `  ${varName}: ${ctx.parsed.y} ${unidad}`,
+          label: (ctx) => {
+            if (ctx.dataset.label === "Umbral preventivo" || ctx.dataset.label === "Umbral crítico") {
+              return `  ${ctx.dataset.label}: ${ctx.parsed.y} ${unidad}`;
+            }
+            return `  ${varName}: ${ctx.parsed.y} ${unidad}`;
+          },
         },
       },
     },
@@ -313,6 +397,19 @@ const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ data, code }) =
           >
             {varName}
           </h3>
+        </div>
+        
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button onClick={handleExportCSV} disabled={exportLoading !== null} style={{
+            background: theme.surface, border: `1px solid ${theme.surfaceBorder}`, borderRadius: 8, padding: "6px 12px", color: theme.text, fontSize: 12, cursor: "pointer", fontFamily: T.fontMono
+          }}>
+            {exportLoading === "csv" ? "..." : "CSV"}
+          </button>
+          <button onClick={handleExportPDF} disabled={exportLoading !== null} style={{
+            background: theme.surface, border: `1px solid ${theme.surfaceBorder}`, borderRadius: 8, padding: "6px 12px", color: theme.text, fontSize: 12, cursor: "pointer", fontFamily: T.fontMono
+          }}>
+            {exportLoading === "pdf" ? "..." : "PDF"}
+          </button>
         </div>
 
         {/* Current reading badge */}
@@ -564,6 +661,12 @@ const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ data, code }) =
             })}
           </ul>
         </div>
+      </div>
+
+      <div style={{ marginTop: 16, borderTop: `1px solid ${theme.surfaceBorder}`, paddingTop: 12 }}>
+        <p style={{ margin: 0, fontSize: 11, fontFamily: T.fontMono, color: theme.textMuted }}>
+          Fuente: IDEAM / CodeChocó — Datos en Tiempo Real
+        </p>
       </div>
 
       <style>{`

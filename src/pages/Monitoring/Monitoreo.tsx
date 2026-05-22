@@ -1,8 +1,9 @@
 // @ts-nocheck
-import { FiEye } from "react-icons/fi";
+import { FiEye, FiArrowLeft, FiDownload } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ApiRest from "../../service/ApiRest";
+import { Hidrológico } from "./Hidrológico";
 import { Meteorológico } from "./Meteorológico";
 import PageMeta from "../../components/common/PageMeta";
 import { Solar } from "./Solar";
@@ -54,11 +55,27 @@ const LoadingState = () => (
 
 // Componente de error
 const ErrorState = ({ message }: { message: string }) => (
-  <div className="p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-md">
-    <p className="font-bold text-red-700 dark:text-red-300">
-      Error al cargar la estación:
-    </p>
-    <p className="text-sm text-red-600 dark:text-red-400 mt-1">{message}</p>
+  <div className="p-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-600 rounded-xl shadow-md space-y-4">
+    <div>
+      <p className="font-bold text-red-700 dark:text-red-300 text-lg">
+        Error al cargar la estación:
+      </p>
+      <p className="text-sm text-red-600 dark:text-red-400 mt-1">{message}</p>
+    </div>
+    <div className="flex gap-4">
+      <Link
+        to="/stations"
+        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm transition shadow-lg shadow-red-600/30"
+      >
+        Volver a Gestión
+      </Link>
+      <Link
+        to="/"
+        className="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold text-sm hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+      >
+        Ir al Mapa Principal
+      </Link>
+    </div>
   </div>
 );
 
@@ -106,12 +123,7 @@ export const Monitoreo = () => {
       case 1:
         return <Meteorológico estacion={estacion} />;
       case 2:
-        return (
-          <div className="text-gray-700 dark:text-gray-300 p-4 border rounded-lg border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold mb-2">Estación Tipo 2</h2>
-            <p>Datos genéricos para este tipo de estación.</p>
-          </div>
-        );
+        return <Hidrológico estacion={estacion} />;
       case 3:
         return <Calidad estacion={estacion} />;
       case 4:
@@ -130,20 +142,44 @@ export const Monitoreo = () => {
       <div className="p-6 rounded-2xl shadow-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
         {/* Encabezado */}
         <div className="mb-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+          <Link
+            to="/stations"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors mb-4"
+          >
+            <FiArrowLeft /> Volver a Gestión
+          </Link>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2 md:mb-0">
               {loading ? "Monitoreo" : estacion?.nombre || "Estación Desconocida"}
             </h1>
 
             {estacion && (
-              <Link
-                to={`/monitoring/variables/${estacion.id}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/50 dark:bg-green-500 dark:hover:bg-green-600"
-                aria-label="Ver todas las variables de la estación"
-              >
-                <FiEye className="text-xl" />
-                Ver todas las variables
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <button
+                  onClick={() => alert('Generando PDF de métricas...')}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg hover:bg-gray-50 border border-gray-200 transition-all duration-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700"
+                  aria-label="Exportar a PDF"
+                >
+                  <FiDownload className="text-lg" />
+                  PDF
+                </button>
+                <button
+                  onClick={() => alert('Generando CSV de métricas...')}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg hover:bg-gray-50 border border-gray-200 transition-all duration-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700"
+                  aria-label="Exportar a CSV"
+                >
+                  <FiDownload className="text-lg" />
+                  CSV
+                </button>
+                <Link
+                  to={`/monitoring/variables/${estacion.id}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/50 dark:bg-green-500 dark:hover:bg-green-600"
+                  aria-label="Ver todas las variables de la estación"
+                >
+                  <FiEye className="text-xl" />
+                  Ver todas las variables
+                </Link>
+              </div>
             )}
           </div>
 

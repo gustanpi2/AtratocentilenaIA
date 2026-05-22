@@ -9,6 +9,7 @@ export interface FilterState {
   timeRange: TimeRange;
   customStart: string;
   customEnd: string;
+  comparative: boolean;
 }
 
 interface FilterPanelProps {
@@ -22,6 +23,7 @@ export const DEFAULT_FILTER: FilterState = {
   timeRange: "7d",
   customStart: "",
   customEnd: "",
+  comparative: false,
 };
 
 const RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
@@ -107,7 +109,7 @@ export const FilterPanel = ({ filter, onChange }: FilterPanelProps) => {
             <label className="block text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Sensores activos
             </label>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5 mb-4">
               {selectedNode?.sensors.filter((s) => s.active).map((s) => (
                 <span
                   key={s.id}
@@ -117,6 +119,23 @@ export const FilterPanel = ({ filter, onChange }: FilterPanelProps) => {
                 </span>
               ))}
             </div>
+            
+            {/* Toggle comparativa */}
+            <label className="flex items-center gap-3 cursor-pointer mt-2 group">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={filter.comparative}
+                  onChange={(e) => onChange({ ...filter, comparative: e.target.checked })}
+                />
+                <div className={`block w-10 h-6 rounded-full transition-colors ${filter.comparative ? "bg-lime-500" : "bg-gray-300 dark:bg-gray-600"}`}></div>
+                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${filter.comparative ? "transform translate-x-4" : ""}`}></div>
+              </div>
+              <span className="text-sm font-semibold text-gray-600 dark:text-gray-300 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">
+                Comparar vs Tiempo Real
+              </span>
+            </label>
           </div>
         </div>
 

@@ -31,13 +31,20 @@ type Props = {
 
 export const Solar = ({ estacion }: Props) => {
     const [data, setData] = useState<Registro[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = () => {
             ApiHelsy
                 .get(`PreviewDetailChartsAdvancedSolar/17/V4`)
-                .then((res) => setData(res.data))
-                .catch((err) => console.error("Error al cargar datos:", err));
+                .then((res) => {
+                    setData(res.data);
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    console.error("Error al cargar datos:", err);
+                    setLoading(false);
+                });
         };
         // Llamada inicial
         fetchData();
@@ -118,7 +125,7 @@ export const Solar = ({ estacion }: Props) => {
             matriz[key].push(valor);
         });
 
-        const output = [];
+        const output: any[] = [];
         for (let d = 0; d < 7; d++) {
             for (let h = 0; h < 24; h++) {
                 const key = `${d}-${h}`;
@@ -198,29 +205,40 @@ export const Solar = ({ estacion }: Props) => {
     return (
         <>
             <PageMeta title="Radiación Solar" description="Monitoreo de la estación." />
-            <div className="grid grid-cols-12 gap-4 md:gap-6">
-                <div className="col-span-12 md:col-span-6">
-                    {/**Radiación Solar */}
-                    <SolarRadiationChart data={exampleData} />
+            
+            {loading || data.length === 0 ? (
+                <div className="flex flex-col items-center justify-center space-y-4 py-20">
+                    <svg className="animate-spin h-8 w-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p className="text-lg font-medium text-gray-600 dark:text-gray-300">Cargando datos solares...</p>
                 </div>
+            ) : (
+                <div className="grid grid-cols-12 gap-4 md:gap-6">
+                    <div className="col-span-12 md:col-span-6">
+                        {/**Radiación Solar */}
+                        <SolarRadiationChart data={exampleData} />
+                    </div>
 
-                <div className="col-span-12 md:col-span-6">
-                    {/*Radiación Solar - Barras */}
-                    <SolarRadiationBarChart data={exampleData2} />
-                </div>
+                    <div className="col-span-12 md:col-span-6">
+                        {/*Radiación Solar - Barras */}
+                        <SolarRadiationBarChart data={exampleData2} />
+                    </div>
 
-                <div className="col-span-12 md:col-span-6">
-                    {/*Radiación Solar - Heatmap */}
-                    <SolarRadiationHeatmap data={exampleData3} />
-                    {/**Radiación Solar - Radar */}
-                    <SolarRadiationStackedChart data={stackedData} />
-                </div>
+                    <div className="col-span-12 md:col-span-6">
+                        {/*Radiación Solar - Heatmap */}
+                        <SolarRadiationHeatmap data={exampleData3} />
+                        {/**Radiación Solar - Radar */}
+                        <SolarRadiationStackedChart data={stackedData} />
+                    </div>
 
-                <div className="col-span-12 md:col-span-6">
-                    {/**Radiación Solar - Apilado */}
-                    <SolarRadiationRadarChart labels={radar.labels} values={radar.values} />
+                    <div className="col-span-12 md:col-span-6">
+                        {/**Radiación Solar - Apilado */}
+                        <SolarRadiationRadarChart labels={radar.labels} values={radar.values} />
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };

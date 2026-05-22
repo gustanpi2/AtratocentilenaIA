@@ -5,6 +5,7 @@ import { NodeInfoCard } from "./NodeInfoCard";
 import { HistoricalCharts } from "./HistoricalCharts";
 import { ReadingsTable } from "./ReadingsTable";
 import { ExportTools } from "./ExportTools";
+import { PredictiveAlertCard } from "./PredictiveAlertCard";
 import { NODES, VARIABLES } from "../../data/mockData";
 
 export const NodeTracking = () => {
@@ -33,7 +34,7 @@ export const NodeTracking = () => {
           </div>
           {selectedNode && selectedVar && (
             <ExportTools
-              recordCount={0}
+              filter={filter}
               station={selectedNode.station}
               variable={selectedVar.name}
             />
@@ -48,8 +49,9 @@ export const NodeTracking = () => {
           <div className="lg:col-span-3">
             <HistoricalCharts filter={filter} />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <NodeInfoCard nodeId={filter.nodeId} />
+            <PredictiveAlertCard filter={filter} />
           </div>
         </div>
 

@@ -123,7 +123,7 @@ const Variables: React.FC = () => {
         <div className="mb-8 pb-4 border-b border-green-200 dark:border-green-700 flex flex-col gap-2">
           {estacion?.id && (
             <Link
-              to={`/monitoreo/${estacion.id}`}
+              to={`/monitoring/${estacion.id}`}
               className="inline-flex items-center text-sm font-medium text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
               aria-label={`Volver al resumen de la estación ${estacion.nombre}`}
             >

@@ -16,6 +16,7 @@ import NotFound from "./pages/OtherPage/NotFound";
 // Páginas privadas
 import { Monitoreo } from "./pages/Monitoring/Monitoreo";
 import Variables from "./pages/Variables/Variables";
+import Information from "./pages/Information";
 import Detalles from "./pages/Variables/Detalles";
 import Users from "./pages/Users/Users";
 import Visits from "./pages/Visits/Visits";
@@ -109,7 +110,8 @@ export default function App() {
         {/* Rutas con layout principal */}
         <Route element={<AppLayout />}>
           {/* Públicas */}
-          <Route index element={<Maps />} />
+          <Route index element={<Information />} />
+          <Route path="/maps" element={<Maps />} />
           <Route path="/crisis" element={<CrisisCenter />} />
           <Route path="/inform" element={<Home />} />
           <Route path="/inform/:estacion" element={<Home />} />
@@ -123,7 +125,6 @@ export default function App() {
           {/* Privadas (solo si está autenticado) */}
           {isAuthenticated && (
             <>
-              <Route path="/comunas" element={<Comunas />} />
               <Route path="/precios" element={<Precios />} />
               <Route path="/users" element={<Users />} />
               <Route path="/profile" element={<UserProfiles />} />

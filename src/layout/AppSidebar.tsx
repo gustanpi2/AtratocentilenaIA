@@ -54,63 +54,52 @@ const AppSidebar: React.FC = () => {
   const isSidebarOpen = isExpanded || isHovered || isMobileOpen;
 
   const navItems: NavItem[] = useMemo(() => {
-    const items: NavItem[] = [
-      {
-        icon: <MdWarning className="text-red-500" />,
-        name: "Centro de Crisis",
-        subItems: [{ name: "Panel de Crisis", path: "/crisis", icon: <MdWarning /> }],
-      },
-      {
-        icon: <MdSensors />,
-        name: "Seguimiento de Nodos",
-        subItems: [{ name: "Análisis de Nodos", path: "/node-tracking", icon: <MdSensors /> }],
-      },
-      {
-        icon: <MdScience className="text-lime-500" />,
-        name: "Agente Centinela AI",
-        subItems: [{ name: "Consola del Agente", path: "/agent", icon: <MdScience /> }],
-      },
-      {
-        icon: <MdHome />,
-        name: "Estaciones",
-        subItems: [{ name: "Maps", path: "/", icon: <MdLocationOn /> }],
-      },
-      {
-        icon: <MdScience className="text-cyan-500" />,
-        name: "Simulación",
-        subItems: [{ name: "Panel de Simulación", path: "/simulacion", icon: <MdScience /> }],
-      },
-    ];
+    const items: NavItem[] = [];
 
     if (isAuthenticated && user?.idrol === 1) {
       items.push(
         {
+          icon: <MdDescription />,
+          name: "Información",
+          subItems: [
+            { name: "Marco Legal y Guías", path: "/", icon: <MdDescription /> },
+          ],
+        },
+        {
           icon: <MdLocationOn />,
           name: "Estaciones & sensores",
           subItems: [
+            { name: "Mapa", path: "/maps", icon: <MdLocationOn /> },
             { name: "Estaciones", path: "/stations", icon: <MdLocationOn /> },
             { name: "Sensores", path: "/sensors", icon: <MdSensors /> },
           ],
+        },
+        {
+          icon: <MdScience className="text-cyan-500" />,
+          name: "Simulación",
+          subItems: [{ name: "Panel de Simulación", path: "/simulacion", icon: <MdScience /> }],
+        },
+        {
+          icon: <MdSensors />,
+          name: "Seguimiento de Nodos",
+          subItems: [{ name: "Análisis de Nodos", path: "/node-tracking", icon: <MdSensors /> }],
+        },
+        {
+          icon: <MdScience className="text-lime-500" />,
+          name: "Agente Centinela AI",
+          subItems: [{ name: "Consola del Agente", path: "/agent", icon: <MdScience /> }],
+        },
+        {
+          icon: <MdWarning className="text-red-500" />,
+          name: "Centro de Crisis",
+          subItems: [{ name: "Panel de Crisis", path: "/crisis", icon: <MdWarning /> }],
         },
         {
           icon: <MdManageAccounts />,
           name: "Gestión & usuarios",
           subItems: [
             { name: "Usuarios", path: "/users", icon: <MdPeople /> },
-            //{ name: "Clientes", path: "/customers", icon: <MdPeople /> },
-            {
-              name: "Registro Visitas",
-              path: "/visits",
-              icon: <MdManageAccounts />,
-            },
-          ],
-        },
-        {
-          icon: <MdDescription />,
-          name: "Información",
-          subItems: [
-            { name: "Comunas", path: "/comunas", icon: <MdLocationOn /> },
-           // { name: "Documentación", path: "/docs", icon: <MdDescription /> },
+            { name: "Registro Visitas", path: "/visits", icon: <MdManageAccounts /> },
           ],
         }
       );
