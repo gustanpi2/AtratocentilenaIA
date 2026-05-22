@@ -12,10 +12,15 @@ import {
   MdHome,
   MdSensors,
   MdWarning,
+<<<<<<< HEAD
   MdScience,
+=======
+  MdSmartToy,
+>>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
 } from "react-icons/md";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
+import { SidebarTacticalControls } from "./SidebarTacticalControls";
 
 import logoBlanco from "../assets/images/logo_blanc.png";
 import logoOscuro from "../assets/images/logo_negro.png";
@@ -64,6 +69,11 @@ const AppSidebar: React.FC = () => {
         icon: <MdSensors />,
         name: "Seguimiento de Nodos",
         subItems: [{ name: "Análisis de Nodos", path: "/node-tracking", icon: <MdSensors /> }],
+      },
+      {
+        icon: <MdSmartToy className="text-lime-500" />,
+        name: "Agente Centinela AI",
+        subItems: [{ name: "Consola del Agente", path: "/agent", icon: <MdSmartToy /> }],
       },
       {
         icon: <MdHome />,
@@ -263,6 +273,7 @@ const AppSidebar: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+                {nav.name === "Centro de Crisis" && <SidebarTacticalControls />}
               </div>
             )}
           </li>
@@ -355,7 +366,7 @@ const AppSidebar: React.FC = () => {
               className={`text-gray-400 dark:text-gray-500 uppercase font-bold text-[10px] mb-2 px-2 transition-opacity duration-300
               ${isSidebarOpen ? "opacity-100" : "opacity-0"}`}
             >
-              Más Acciones
+              
             </h2>
             {renderMenuItems(
               isAuthenticated

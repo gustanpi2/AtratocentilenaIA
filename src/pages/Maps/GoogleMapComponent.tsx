@@ -9,6 +9,7 @@
   } from "lucide-react";
   import ApiRest from "../../service/ApiRest";
   import { useTheme } from "../../context/ThemeContext"; // ajusta esta ruta si es necesario
+  import { STATIONS } from "../../data/stations";
 
   // ─── Types ────────────────────────────────────────────────────────────────────
   export interface Location {
@@ -176,6 +177,35 @@
       mapRef.current?.setZoom(17);
     }, []);
 
+    // ── Station status helpers ──
+    const getStationStatusIcon = useCallback((nombre: string) => {
+      const match = STATIONS.find((s) => s.name.toLowerCase() === nombre.toLowerCase());
+      if (!match) return null;
+
+      const isOnline = match.connectionStatus === "online" && !match.autonomousMode;
+      const isOffline = match.connectionStatus === "offline" && !match.autonomousMode;
+      const isAutonomous = match.autonomousMode;
+      const isCritical = match.riskLevel === "critical";
+
+      if (isCritical) {
+        return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="#ef4444" stroke="#fff" stroke-width="3"/><text x="22" y="28" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold" font-family="monospace">!</text></svg>`
+        )}`, scaledSize: new window.google.maps.Size(44, 44) };
+      }
+      if (isAutonomous) {
+        return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><polygon points="20,3 37,20 20,37 3,20" fill="#a855f7" stroke="#fff" stroke-width="2.5"/><text x="20" y="25" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold" font-family="monospace">M</text></svg>`
+        )}`, scaledSize: new window.google.maps.Size(40, 40) };
+      }
+      if (isOffline) {
+        return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="#6b7280" stroke="#374151" stroke-width="2.5"/><line x1="10" y1="10" x2="26" y2="26" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="26" y1="10" x2="10" y2="26" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>`
+        )}`, scaledSize: new window.google.maps.Size(36, 36) };
+      }
+      // online — default logo icon
+      return null;
+    }, []);
+
     // ── Derived data ──
     const filtered = locations.filter((l) => {
       if (!activeTypes.has(l.id_tipo_estacion)) return false;
@@ -248,7 +278,7 @@
                       lat: safeParse(location.lat),
                       lng: safeParse(location.lng, true) + offset * Math.sin(angle),
                     }}
-                    icon={{ url: "/atratocentinela_logo.png", scaledSize: new window.google.maps.Size(40, 40) }}
+                    icon={getStationStatusIcon(location.nombre) || { url: "/atratocentinela_logo.png", scaledSize: new window.google.maps.Size(40, 40) }}
                     onClick={() => handleMarkerClick(location)}
                   />
                 );

@@ -21,7 +21,12 @@ export const ChatbotInput = ({ onSend, disabled }: ChatbotInputProps) => {
     setInput("");
   };
 
-  const suggestions = ["Nivel del río", "Riesgo de inundación", "Alertas activas", "Ayuda"];
+  const suggestions = [
+    "¿Cómo está el río hoy?",
+    "¿Qué estaciones están en alerta?",
+    "¿Cuál es el nivel en Quibdó?",
+    "¿Hay riesgo de inundación?",
+  ];
 
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 p-3 bg-gray-50/50 dark:bg-gray-800/50">
