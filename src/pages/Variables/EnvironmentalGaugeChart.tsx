@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface VariableAmbiental {
@@ -523,16 +524,17 @@ const EnvironmentalGaugeChart: React.FC<EnvironmentalGaugeChartProps> = ({ data,
           },
           {
             label: "Tendencia",
-            value: `${pendiente >= 0 ? "▲" : "▼"} ${Math.abs(pendiente).toFixed(3)}`,
+            value: Math.abs(pendiente).toFixed(3),
             sub: `${unidad}/lectura`,
             color: pendiente >= 0 ? T.up : T.down,
+            isTendencia: true,
           },
           {
             label: "Rango",
             value: rango.toFixed(3),
             sub: `${unidad} amplitud`,
           },
-        ].map(({ label, value, sub, color }) => (
+        ].map(({ label, value, sub, color, isTendencia }: { label: string; value: string; sub: string; color?: string; isTendencia?: boolean }) => (
           <div
             key={label}
             style={{
@@ -548,7 +550,7 @@ const EnvironmentalGaugeChart: React.FC<EnvironmentalGaugeChartProps> = ({ data,
               {label}
             </p>
             <p style={{ margin: 0, fontSize: 14, fontWeight: 700, fontFamily: T.fontMono, color: color ?? theme.text }}>
-              {value}
+              {isTendencia ? <>{pendiente >= 0 ? <FaArrowUp style={{fontSize:11, marginRight:2}} /> : <FaArrowDown style={{fontSize:11, marginRight:2}} />} {value}</> : value}
             </p>
             <p style={{ margin: 0, fontSize: 10, fontFamily: T.fontMono, color: theme.textDim }}>
               {sub}

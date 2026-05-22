@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChatbotMessage } from "./ChatbotMessage";
 import { ChatbotInput } from "./ChatbotInput";
 import { MOCK_CHATBOT_RESPONSES } from "../../data/mockData";
+import { FaRobot } from "react-icons/fa";
 
 interface Message {
   id: string;
@@ -63,7 +64,7 @@ export const Chatbot = () => {
         <div className="fixed bottom-20 right-5 z-[99999] w-80 sm:w-96 h-[500px] max-h-[70vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden animate-chatbot-slide">
           <div className="flex items-center justify-between px-4 py-3 bg-lime-500 text-white">
             <div className="flex items-center gap-2.5">
-              <span className="text-xl">🤖</span>
+              <FaRobot className="text-xl" />
               <div>
                 <p className="font-bold text-sm">Asistente AtratoCentinela AI</p>
                 <p className="text-[10px] opacity-80 font-mono">Online · IA Predictiva</p>

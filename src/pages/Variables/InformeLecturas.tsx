@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface DatosPorFecha {
@@ -98,11 +99,9 @@ const COLUMNS = [
 
 // Trend arrow for pendiente column
 const TrendArrow: React.FC<{ value: number }> = ({ value }) => {
-  //@ts-ignore
-  const color = value > 0 ? T.positive : value < 0 ? T.negative : T.neutral;
   return (
     <span style={{ marginLeft: 4, fontSize: 9 }}>
-      {value > 0 ? "▲" : value < 0 ? "▼" : "—"}
+      {value > 0 ? <FaArrowUp style={{fontSize:9}} /> : value < 0 ? <FaArrowDown style={{fontSize:9}} /> : "—"}
     </span>
   );
 };

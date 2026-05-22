@@ -6,6 +6,7 @@ import {
   FaArrowUp, FaArrowDown, FaSmile, FaMeh, FaFrown,
   FaDownload, FaBell, FaBellSlash, FaSync,
   FaChartLine, FaTable, FaInfoCircle, FaTimes,
+  FaCheck, FaExclamationTriangle,
 } from "react-icons/fa";
 import { GiChemicalDrop, GiDustCloud } from "react-icons/gi";
 import { MdCo2, MdAir } from "react-icons/md";
@@ -303,14 +304,14 @@ const Calidad = ({ estacion }: Props) => {
         <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:20, alignItems:"center" }}>
           {[
             { k:"all",      label:"Todos" },
-            { k:"good",     label:"✓ Buena" },
-            { k:"moderate", label:"◎ Moderada" },
-            { k:"poor",     label:"▲ Mala" },
-            { k:"danger",   label:"⚠ Peligrosa" },
-            { k:"alerts",   label:"🔔 Alertas" },
+            { k:"good",     label:"Buena",   icon: <FaCheck style={{fontSize:11}} /> },
+            { k:"moderate", label:"Moderada" },
+            { k:"poor",     label:"Mala",    icon: <FaArrowUp style={{fontSize:11}} /> },
+            { k:"danger",   label:"Peligrosa", icon: <FaExclamationTriangle style={{fontSize:11}} /> },
+            { k:"alerts",   label:"Alertas", icon: <FaBell style={{fontSize:11}} /> },
           ].map(f => (
             <button key={f.k} className={`flt-btn ${filterKey===f.k?"active":""}`} onClick={() => setFilterKey(f.k)}>
-              {f.label}
+              {f.icon}{f.icon ? "\u00A0" : ""}{f.label}
             </button>
           ))}
           <button className="ico-btn" onClick={fetchData} title="Actualizar ahora" style={{ marginLeft:"auto" }}>
@@ -396,8 +397,8 @@ const Calidad = ({ estacion }: Props) => {
 
                   {/* Alerta disparada */}
                   {alertFired && (
-                    <div style={{ marginTop:8, fontSize:10, fontFamily:T.fontM, color:T.warn, background:"rgba(250,204,21,0.08)", border:"1px solid rgba(250,204,21,0.2)", borderRadius:6, padding:"3px 8px" }}>
-                      ⚠ Umbral superado
+                    <div style={{ marginTop:8, fontSize:10, fontFamily:LOCAL.fontM, color:LOCAL.warn, background:"rgba(250,204,21,0.08)", border:"1px solid rgba(250,204,21,0.2)", borderRadius:6, padding:"3px 8px" }}>
+                      <FaExclamationTriangle style={{fontSize:10, marginRight:4}} />Umbral superado
                     </div>
                   )}
                 </div>

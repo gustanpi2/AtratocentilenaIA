@@ -1,3 +1,5 @@
+import { FaRobot } from "react-icons/fa";
+
 interface ChatbotMessageProps {
   text: string;
   isUser: boolean;
@@ -21,7 +23,7 @@ export const ChatbotMessage = ({ text, isUser, timestamp }: ChatbotMessageProps)
       >
         {!isUser && (
           <div className="flex items-center gap-1.5 mb-1">
-            <span className="text-xs">🤖</span>
+            <FaRobot className="text-xs" />
             <span className="text-[10px] font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">
               Asistente AtratoCentinela AI
             </span>

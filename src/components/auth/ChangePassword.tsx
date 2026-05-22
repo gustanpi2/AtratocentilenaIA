@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import Swal from "sweetalert2";
-import Helper from "../../service/Helper";
+import { API_URL } from "../../service/api";
+import { FaLock } from "react-icons/fa";
 import ChangePasswordValidation from "./ChangePasswordValidation";
 
 interface ChangePasswordPayload {
@@ -27,7 +28,7 @@ const ChangePassword: React.FC = () => {
 
     try {
       const searchResponse = await fetch(
-        `${Helper.url}Controllers/ChangePassword.php?buscarEmail2=${encodeURIComponent(
+        `${API_URL}Controllers/ChangePassword.php?buscarEmail2=${encodeURIComponent(
           email
         )}`
       );
@@ -44,7 +45,7 @@ const ChangePassword: React.FC = () => {
         ChangePassword: true,
       };
 
-      const response = await fetch(`${Helper.url}ChangePassword.php`, {
+      const response = await fetch(`${API_URL}ChangePassword.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -87,7 +88,7 @@ const ChangePassword: React.FC = () => {
               text-white text-xl font-bold shadow-lg
             "
           >
-            🔒
+            <FaLock />
           </div>
 
           <h1 className="text-2xl font-bold text-gray-900">

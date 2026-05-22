@@ -1,6 +1,6 @@
 "use client";
 
-import { FaCloudSun, FaTractor, FaUniversity } from "react-icons/fa";
+import { FaCloudSun, FaTractor, FaUniversity, FaMapPin, FaCalculator, FaFileInvoice, FaCheck } from "react-icons/fa";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function PricingClimate() {
@@ -119,7 +119,7 @@ export default function PricingClimate() {
                       className="flex items-center gap-4 text-white/90 font-semibold"
                     >
                       <span className="inline-block bg-green-400 rounded-full p-2 text-white shadow-md">
-                        ✓
+                        <FaCheck />
                       </span>
                       <span>{f}</span>
                     </li>
@@ -153,7 +153,7 @@ export default function PricingClimate() {
           }`}
         >
           <h2 className="text-4xl font-semibold mb-6 flex items-center gap-3 drop-shadow-md">
-            📌 Factores que justifican cobrar más
+            <FaMapPin className="text-yellow-300" /> Factores que justifican cobrar más
           </h2>
           <ul className="space-y-4 list-disc pl-6 text-lg leading-relaxed">
             {factors.map((f, i) => (
@@ -165,7 +165,7 @@ export default function PricingClimate() {
         {/* Ejemplo práctico */}
         <section className="mt-14 max-w-3xl mx-auto">
           <h2 className="text-4xl font-semibold mb-5 flex items-center gap-3 drop-shadow-md">
-            🧮 Ejemplo práctico
+            <FaCalculator className="text-blue-300" /> Ejemplo práctico
           </h2>
           <ul className="space-y-2 pl-6 list-disc text-lg text-white/90 mb-4">
             {example.map((e, i) => (
@@ -183,7 +183,7 @@ export default function PricingClimate() {
             ${theme === "dark" ? "bg-gray-900/70 text-white/90" : "bg-white/10 text-white/90"}`}
         >
           <h2 className="text-4xl font-semibold mb-6 flex items-center gap-3">
-            🧾 Propuesta comercial
+            <FaFileInvoice className="text-green-300" /> Propuesta comercial
           </h2>
           <p className="mb-4 text-lg leading-relaxed">
             Ofrecemos acceso confiable a datos climáticos históricos y en tiempo real, con distintas soluciones según tus necesidades:

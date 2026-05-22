@@ -12,9 +12,13 @@ import {
   MdHome,
   MdSensors,
   MdWarning,
+  MdScience,
 } from "react-icons/md";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
+
+import logoBlanco from "../assets/images/logo_blanc.png";
+import logoOscuro from "../assets/images/logo_negro.png";
 
 type SubItem = {
   name: string;
@@ -66,6 +70,11 @@ const AppSidebar: React.FC = () => {
         name: "Estaciones",
         subItems: [{ name: "Maps", path: "/", icon: <MdLocationOn /> }],
       },
+      {
+        icon: <MdScience className="text-cyan-500" />,
+        name: "Simulación",
+        subItems: [{ name: "Panel de Simulación", path: "/simulacion", icon: <MdScience /> }],
+      },
     ];
 
     if (isAuthenticated && user?.idrol === 1) {
@@ -93,10 +102,9 @@ const AppSidebar: React.FC = () => {
         },
         {
           icon: <MdDescription />,
-          name: "Información y precios",
+          name: "Información",
           subItems: [
             { name: "Comunas", path: "/comunas", icon: <MdLocationOn /> },
-            { name: "Precios", path: "/precios", icon: <MdAttachMoney /> },
            // { name: "Documentación", path: "/docs", icon: <MdDescription /> },
           ],
         }
@@ -273,25 +281,61 @@ const AppSidebar: React.FC = () => {
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Logo */}
-      <div
-        className={`py-6 px-4 flex items-center transition-all duration-300 
-        ${!isSidebarOpen ? "justify-center" : "justify-start gap-3"}`}
-      >
-        <Link to="/" aria-label="Inicio">
-          {!isSidebarOpen ? (
-            <img src="/images/logonew.png" alt="AtratoCentinela AI" width={48} className="rounded" />
-          ) : (
-            <img
-              src="/images/logonew.png"
-              alt="AtratoCentinela AI"
-              width={150}
-              className="rounded"
-            />
-          )}
-        </Link>
-      </div>
+     
 
+  
+    {/* Logo */}
+    <div
+      className={`py-6 px-4 flex transition-all duration-300
+      ${!isSidebarOpen ? "justify-center" : "justify-center"}`}
+    >
+      <Link
+        to="/"
+        aria-label="Inicio"
+        className="flex flex-col items-center justify-center w-full"
+      >
+
+        {/* Sidebar cerrado */}
+        {!isSidebarOpen ? (
+          <>
+            {/* Logo claro */}
+            <img
+              src={logoOscuro}
+              alt="AtratoCentinela AI"
+              width={52}
+              className="rounded dark:hidden object-contain"
+            />
+
+            {/* Logo oscuro */}
+            <img
+              src={logoBlanco}
+              alt="AtratoCentinela AI"
+              width={52}
+              className="hidden rounded dark:block object-contain"
+            />
+          </>
+        ) : (
+          <>
+            {/* Logo claro */}
+            <img
+              src={logoOscuro}
+              alt="AtratoCentinela AI"
+              width={170}
+              className="rounded dark:hidden object-contain mx-auto"
+            />
+
+            {/* Logo oscuro */}
+            <img
+              src={logoBlanco}
+              alt="AtratoCentinela AI"
+              width={170}
+              className="hidden rounded dark:block object-contain mx-auto"
+            />
+          </>
+        )}
+
+      </Link>
+    </div>
       <hr className="border-gray-100 dark:border-gray-800 mx-4" />
 
       <div className="flex flex-col overflow-y-auto no-scrollbar flex-1 px-4 py-4">

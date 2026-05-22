@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { FaStar } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const INITIAL = { email: "", password: "" };
@@ -58,7 +59,7 @@ export default function SignInForm() {
     setLoading(true);
     try {
       await login(form.email, form.password);
-      toast.success("Bienvenido 🎉");
+      toast.success(<><FaStar style={{marginRight:6}} />Bienvenido</>);
       navigate(ruta ? decodeURIComponent(ruta) : "/");
     } catch {
       toast.error("Credenciales incorrectas. Inténtalo de nuevo.");
@@ -211,7 +212,8 @@ export default function SignInForm() {
           {/* Avatar + header */}
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div className="si-avatar">
-              <img src="/images/IconGeo.png" alt="Ícono" style={{ width: 36, height: 36, objectFit: "contain" }} />
+              <img src="/images/logonew.png" alt="AtratoCentinela AI" style={{ width: 36, height: 36, objectFit: "contain" }} className="dark:hidden" />
+              <img src="/images/LOGO-2-0-DARK.png" alt="AtratoCentinela AI" style={{ width: 36, height: 36, objectFit: "contain" }} className="hidden dark:block" />
             </div>
             <h1 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 800, color: "#111827", letterSpacing: "-0.02em" }}
               className="dark:text-white">

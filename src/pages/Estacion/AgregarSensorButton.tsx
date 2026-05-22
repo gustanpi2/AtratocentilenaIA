@@ -99,7 +99,7 @@ export const AgregarSensorButton: React.FC<AgregarSensorButtonProps> = ({ estaci
                 {/* Encabezado */}
                 <div className="p-8 border-b border-gray-100 dark:border-gray-700">
                     <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white text-center">
-                        ➕ Agregar Sensor a la Estación
+                        <FaPlus className="inline-block mr-2" /> Agregar Sensor a la Estación
                     </h2>
                 </div>
 

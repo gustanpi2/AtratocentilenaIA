@@ -1,5 +1,6 @@
 import { useAlerts } from "../alerts/AlertProvider";
 import { playSiren, stopSiren } from "../alerts/AlertSound";
+import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
 
 export const SirenButton = () => {
   const { isSirenActive, toggleSiren } = useAlerts();
@@ -23,7 +24,7 @@ export const SirenButton = () => {
       }`}
     >
       <span className="text-lg">
-        {isSirenActive ? "🔊" : "🔇"}
+        {isSirenActive ? <FaVolumeUp /> : <FaVolumeMute />}
       </span>
       <span>{isSirenActive ? "SIRENA ACTIVA" : "ACTIVAR SIRENA"}</span>
       {isSirenActive && (

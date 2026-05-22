@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import Helper from "../../service/Helper";
+import { API_URL } from "../../service/api";
+import { FaCheck } from "react-icons/fa";
 
 const CODE_LENGTH = 4;
 
@@ -44,7 +45,7 @@ const AccountValidation: React.FC = () => {
 
     try {
       const response = await axios.get(
-        `${Helper.url}auth/singup/codigo/${code}`
+        `${API_URL}auth/singup/codigo/${code}`
       );
 
       if (response.status === 200) {
@@ -97,7 +98,7 @@ const AccountValidation: React.FC = () => {
           <div className="mx-auto w-14 h-14 rounded-full
                           bg-gradient-to-br from-green-500 to-blue-600
                           flex items-center justify-center text-white text-xl font-bold shadow-lg">
-            ✓
+            <FaCheck />
           </div>
 
           <h2 className="text-2xl font-bold text-gray-900">

@@ -30,7 +30,7 @@ export const CrisisCenter = () => {
         description="Sistema de monitoreo, prevención y respuesta temprana — AtratoCentinela AI"
       />
 
-      <div className="max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 xl:px-6 space-y-8">
+      <div className="max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 xl:px-6 space-y-6">
         {/* Header */}
         <CrisisHeader />
 
@@ -54,32 +54,32 @@ export const CrisisCenter = () => {
                 Mapa de riesgo — AtratoCentinela AI
               </h2>
             </div>
-            <div className="min-h-[500px] h-[580px] lg:h-[640px]">
+            <div className="h-[500px] lg:h-[640px]">
               <EmergencyMap />
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6 h-[500px] lg:h-[640px]">
             {/* Risk gauge */}
-            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex-1">
               <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   Riesgo de Inundación
                 </h3>
               </div>
-              <div className="p-6 flex justify-center">
+              <div className="p-6 flex items-center justify-center h-[calc(100%-53px)]">
                 <RiskGauge value={72} label="Riesgo General" size="lg" />
               </div>
             </section>
 
             {/* AI Prediction */}
-            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex-1">
               <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   Predicción IA
                 </h3>
               </div>
-              <div className="p-5">
+              <div className="p-5 h-[calc(100%-53px)]">
                 <PredictionPanel />
               </div>
             </section>

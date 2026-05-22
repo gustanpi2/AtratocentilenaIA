@@ -1,5 +1,6 @@
 import { useAlerts } from "../alerts/AlertProvider";
 import { SirenButton } from "./SirenButton";
+import { FaBell } from "react-icons/fa";
 
 export const CrisisHeader = () => {
   const { activeAlerts, criticalAlerts, isCrisisMode } = useAlerts();
@@ -22,7 +23,7 @@ export const CrisisHeader = () => {
       <div className="flex items-center gap-4">
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🚨</span>
+            <FaBell className="text-2xl text-red-500" />
             <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Centro de Crisis
             </h1>
@@ -33,7 +34,7 @@ export const CrisisHeader = () => {
                   : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"
               }`}
             >
-              {isCrisisMode ? "🚨 MODO CRISIS" : "MONITOREO"}
+              {isCrisisMode ? <><FaBell className="inline mr-1" />MODO CRISIS</> : "MONITOREO"}
             </span>
           </div>
           <div className="flex items-center gap-3 mt-1 text-xs font-mono text-gray-500 dark:text-gray-400">

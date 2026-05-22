@@ -48,6 +48,7 @@ import { NodeTracking } from "./modules/node-tracking/NodeTracking";
 import { useAuth } from "./context/AuthContext";
 import Comunas from "./pages/Comunas/Comunas";
 import Precios from "./pages/Precios/Precios";
+import Simulacion from "./pages/Simulacion";
 import ChangePassword from "./components/auth/ChangePassword";
 import { useEffect } from "react";
 import axios from "axios";
@@ -102,12 +103,13 @@ export default function App() {
       <Routes>
         {/* Rutas con layout principal */}
         <Route element={<AppLayout />}>
-          {/* 🌐 Públicas */}
+          {/* Públicas */}
           <Route index element={<Maps />} />
           <Route path="/crisis" element={<CrisisCenter />} />
           <Route path="/inform" element={<Home />} />
           <Route path="/inform/:estacion" element={<Home />} />
           <Route path="/node-tracking" element={<NodeTracking />} />
+          <Route path="/simulacion" element={<Simulacion />} />
           <Route path="/monitoring/:id" element={<Monitoreo />} />
           <Route path="/monitoring/variables/:id" element={<Variables />} />
           <Route path="/monitoring/variables/detalles/:codigo/:id" element={<Detalles />} />
@@ -139,12 +141,12 @@ export default function App() {
           )}
         </Route>
 
-        {/* 🔐 Rutas de autenticación */}
+        {/* Rutas de autenticación */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signin/:ruta" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
 
-        {/* ❌ 404 */}
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

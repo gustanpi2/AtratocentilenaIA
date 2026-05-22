@@ -300,6 +300,10 @@ export default function SignUpForm() {
         <div className="su-card">
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <div className="flex justify-center mb-4">
+              <img src="/images/logonew.png" alt="AtratoCentinela AI" className="h-9 dark:hidden" />
+              <img src="/images/LOGO-2-0-DARK.png" alt="AtratoCentinela AI" className="h-9 hidden dark:block" />
+            </div>
             <h1 style={{ margin: "0 0 6px", fontSize: 24, fontWeight: 800, color: "#111827", letterSpacing: "-0.02em" }}
               className="dark:text-white">
               Crear cuenta
