@@ -221,7 +221,7 @@ export const HistoricalCharts = ({ filter }: HistoricalChartsProps) => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm h-full flex flex-col">
       <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <h2 className="text-base font-semibold text-gray-700 dark:text-gray-300">
           {variable?.name} — {variable?.description}
@@ -232,8 +232,8 @@ export const HistoricalCharts = ({ filter }: HistoricalChartsProps) => {
           <StatBadge label="Mín" value={`${chartData.min.toFixed(2)} ${variable?.unit}`} color="text-blue-500" />
         </div>
       </div>
-      <div className="p-6">
-        <div className="h-[320px]">
+      <div className="p-6 flex-1 flex flex-col">
+        <div className="relative flex-1 w-full min-h-[400px]">
           <Line data={config} options={options} />
         </div>
       </div>

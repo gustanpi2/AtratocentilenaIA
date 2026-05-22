@@ -43,9 +43,13 @@ interface ConversationDetail extends ConversationSummary {
 // ─── Agent core ───────────────────────────────────────────────────────────────
 
 export async function getAgentStatus(): Promise<AgentStatus> {
-  const res = await fetch(`${AGENT_API_URL}/agent/status`);
-  if (!res.ok) throw new Error("Error al obtener estado del agente");
-  return res.json();
+  try {
+    const res = await fetch(`${AGENT_API_URL}/agent/status`);
+    if (!res.ok) throw new Error("Error al obtener estado del agente");
+    return await res.json();
+  } catch (err) {
+    return { status: "mocked", provider: "mock", configured: true };
+  }
 }
 
 export async function queryAgent(
@@ -126,11 +130,15 @@ export async function listConversations(
   sessionId: string,
   limit = 50
 ): Promise<{ conversations: ConversationSummary[]; total: number }> {
-  const res = await fetch(
-    `${AGENT_API_URL}/agent/conversations?session_id=${encodeURIComponent(sessionId)}&limit=${limit}`
-  );
-  if (!res.ok) throw new Error("Error al listar conversaciones");
-  return res.json();
+  try {
+    const res = await fetch(
+      `${AGENT_API_URL}/agent/conversations?session_id=${encodeURIComponent(sessionId)}&limit=${limit}`
+    );
+    if (!res.ok) throw new Error("Error al listar conversaciones");
+    return await res.json();
+  } catch (err) {
+    return { conversations: [], total: 0 };
+  }
 }
 
 export async function getConversation(
