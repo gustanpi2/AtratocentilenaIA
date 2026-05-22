@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtratoCentinela AI - Pitch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0d1117',
+                        emerald: {
+                            500: '#10b981',
+                            400: '#34d399',
+                            600: '#059669',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #05080c;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+        }
+
+        .presentation-container {
+            width: 100%;
+            max-width: 1440px;
+            aspect-ratio: 16 / 9;
+            max-height: 100vh;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            padding: 4rem 6rem;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+        }
+
+        .glass-accent {
+            background: rgba(16, 185, 129, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 1rem;
+        }
+
+        /* Animations for slide 1 */
+        .river-wave {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #10b981, transparent);
+            border-radius: 50%;
+            animation: wave 3s infinite ease-in-out alternate;
+            opacity: 0.5;
+        }
+
+        @keyframes wave {
+            0% { transform: scaleX(0.8) translateY(0); opacity: 0.3; }
+            100% { transform: scaleX(1.2) translateY(-10px); opacity: 0.8; }
+        }
+
+        .radar-ping {
+            width: 20px;
+            height: 20px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: relative;
+        }
+        .radar-ping::after {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            border: 2px solid #10b981;
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes ping {
+            75%, 100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* Phone frame */
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            border-radius: 36px;
+            border: 8px solid #1f2937;
+            background: #000;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 2px #374151;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 24px;
+            background: #1f2937;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 20;
+        }
+        .gallery-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .gallery-img.active {
+            opacity: 1;
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 50;
+        }
+        .btn-control {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-control:hover {
+            background: rgba(16, 185, 129, 0.8);
+            border-color: #10b981;
+            transform: scale(1.05);
+        }
+        .slide-indicator {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 50;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        .dot.active {
+            background: #10b981;
+            transform: scale(1.5);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container" id="presentation">
+        
+        <!-- DIAPOSITIVA 1: PORTADA IMPACTANTE -->
+        <div class="slide active">
+            <div class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
+                <div class="flex items-center justify-center gap-6 mb-4">
+                    <div class="radar-ping"></div>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 drop-shadow-lg">
+                    AtratoCentinela AI
+                </h1>
+                <h2 class="text-2xl md:text-3xl font-light text-gray-300 max-w-4xl mx-auto leading-relaxed">
+                    Ecosistema Digital de Alerta Temprana y Monitoreo Ambiental para el Río Atrato
+                </h2>
+                
+                <div class="w-2/3 mx-auto mt-12 space-y-4">
+                    <div class="river-wave"></div>
+                    <div class="river-wave" style="animation-delay: -1s; width: 80%; margin: 0 auto; opacity: 0.3"></div>
+                </div>
+
+                <div class="mt-16 glass inline-block px-8 py-4">
+                    <p class="text-sm font-medium text-gray-400 uppercase tracking-widest">
+                        Diseñado bajo los lineamientos de Colombia 5.0, MinTIC y la Sentencia T-622
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 2: LA PROBLEMÁTICA TERRITORIAL -->
+        <div class="slide">
+            <h2 class="text-5xl font-bold mb-16 border-l-4 border-emerald-500 pl-6">El Desafío del Atrato y sus Comunidades</h2>
+            <div class="grid grid-cols-2 gap-12 flex-1">
+                <div class="glass p-10 flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 text-9xl opacity-5">⚠️</div>
+                    <h3 class="text-2xl font-semibold text-red-400 mb-6 flex items-center gap-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Problema Crítico
+                    </h3>
+                    <p class="text-xl text-gray-300 leading-relaxed">
+                        Crecientes súbitas incontrolables, contaminación por sólidos y minería ilegal en la cuenca. <strong class="text-white">Falta crónica de sistemas de alerta temprana</strong> para comunidades ribereñas aisladas.
+                    </p>
+                </div>
+                <div class="glass p-10 flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 text-9xl opacity-5">🌧️</div>
+                    <h3 class="text-2xl font-semibold text-emerald-400 mb-6 flex items-center gap-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        La Realidad Conectiva
+                    </h3>
+                    <p class="text-xl text-gray-300 leading-relaxed">
+                        El Chocó es una de las zonas más húmedas del planeta. Los sistemas tradicionales fallan porque <strong class="text-white">no resisten la humedad extrema ni la pérdida constante de energía y conectividad a internet.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: NUESTRO STACK TECNOLÓGICO -->
+        <div class="slide">
+            <h2 class="text-5xl font-bold mb-16 border-l-4 border-emerald-500 pl-6">Arquitectura de Software Robusta y Escalable</h2>
+            <div class="flex flex-col gap-8 flex-1 justify-center">
+                <div class="glass-accent p-10 flex items-start gap-8 transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="bg-emerald-500/20 p-4 rounded-xl">
+                        <svg class="w-12 h-12 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-bold text-emerald-400 mb-4">Frontend Core</h3>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                            Desarrollado con <strong>React 18</strong> para una interfaz reactiva, <strong>Vite</strong> para empaquetado ultra rápido y <strong>TypeScript</strong> garantizando tipado fuerte y cero errores en producción.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="glass p-10 flex items-start gap-8 transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="bg-blue-500/20 p-4 rounded-xl">
+                        <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-bold text-blue-400 mb-4">Styling & Ergonomía Visual</h3>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                            <strong>Tailwind CSS</strong> para diseño responsive adaptado a cualquier dispositivo, <strong>Lucide Icons</strong> y un esquema nativo <strong>Dark Mode / Glassmorphism</strong> para entornos operativos prolongados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: TOUR POR EL ECOSISTEMA (TRANSICIÓN A LA WEB) -->
+        <div class="slide">
+            <h2 class="text-5xl font-bold mb-4 border-l-4 border-emerald-500 pl-6">Una Plataforma Unificada para el Territorio</h2>
+            <div class="text-emerald-400/80 italic mb-10 pl-7 text-lg">[Paso de palabra al compañero para demostración en vivo de la plataforma]</div>
+            
+            <div class="grid grid-cols-2 gap-6 flex-1">
+                <div class="glass p-6 flex items-center gap-4 hover:border-emerald-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">1</div>
+                    <span class="text-xl font-medium">Información y Marco Legal (Sentencia T-622)</span>
+                </div>
+                <div class="glass p-6 flex items-center gap-4 hover:border-emerald-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">2</div>
+                    <span class="text-xl font-medium">Estaciones & Sensores (Métricas en Tiempo Real de pH, Turbidez y Nivel)</span>
+                </div>
+                <div class="glass p-6 flex items-center gap-4 hover:border-emerald-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">3</div>
+                    <span class="text-xl font-medium">Seguimiento de Nodos Interconectados (Datos IDEAM/CodeChocó)</span>
+                </div>
+                <div class="glass p-6 flex items-center gap-4 hover:border-emerald-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">4</div>
+                    <span class="text-xl font-medium">Agente Centinela AI (Inteligencia Artificial Contextualizada)</span>
+                </div>
+                <div class="glass p-6 flex items-center gap-4 hover:border-emerald-500/50 transition-colors col-span-2">
+                    <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">5</div>
+                    <span class="text-xl font-medium text-red-100">Centro de Crisis (Control de Contingencias)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: CONCLUSIÓN Y VALOR DIFERENCIAL (EDGE COMPUTING) -->
+        <div class="slide">
+            <h2 class="text-5xl font-bold mb-16 border-l-4 border-emerald-500 pl-6">¿Por qué AtratoCentinela AI es la Solución Ganadora?</h2>
+            <div class="grid grid-cols-3 gap-8 flex-1">
+                
+                <div class="glass p-8 flex flex-col">
+                    <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4">Datos Híbridos</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        Integramos el flujo inmediato de nuestras estaciones de hardware con las APIs de datos abiertos e históricos de CodeChocó e IDEAM.
+                    </p>
+                </div>
+
+                <div class="glass p-8 flex flex-col border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+                    <div class="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4">Simulación y Resiliencia Local</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        Diseñado para fallar de forma segura <strong class="text-emerald-400">(Fail-Safe)</strong>. Ante pérdidas de internet o energía, la estación almacena los datos localmente y activa alertas analógicas.
+                    </p>
+                </div>
+
+                <div class="glass p-8 flex flex-col">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4">Código de Colores Inteligente</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        <strong class="text-orange-400">Naranja Intermitente</strong> = Pérdida de comunicación (Estación en modo offline autónomo).<br><br>
+                        <strong class="text-red-400">Rojo Crítico</strong> = Anomalía ambiental detectada en el territorio.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: DEMO DE LA APLICACIÓN MÓVIL -->
+        <div class="slide">
+            <h2 class="text-5xl font-bold mb-10 border-l-4 border-emerald-500 pl-6 text-center border-none">AtratoCentinela Móvil - Control en la Palma de tu Mano</h2>
+            
+            <div class="flex-1 flex items-center justify-center gap-16">
+                
+                <div class="max-w-md">
+                    <p class="text-2xl text-gray-300 leading-relaxed font-light">
+                        "Llevamos la capacidad de monitoreo y la recepción de alertas tempranas directamente al bolsillo de los líderes comunitarios y funcionarios públicos, operando mediante notificaciones optimizadas de bajo consumo."
+                    </p>
+                    <div class="mt-8 flex gap-4">
+                        <div class="bg-white/10 px-4 py-2 rounded-lg text-sm font-semibold">Sensores y Estaciones</div>
+                        <div class="bg-white/10 px-4 py-2 rounded-lg text-sm font-semibold">Alertas Real-Time</div>
+                    </div>
+                </div>
+
+                <div class="phone-mockup shrink-0">
+                    <div class="phone-notch"></div>
+                    <!-- Gallery Container -->
+                    <img src="./movil/WhatsApp Image 2026-05-2 PM.jpeg" class="gallery-img active" alt="Móvil 1">
+                    <img src="./movil/WhatsApp Image 2026-05-21  PM.jpeg" class="gallery-img" alt="Móvil 2">
+                    <img src="./movil/WhatsApp Image 2026-05-21 .50.20 PM.jpeg" class="gallery-img" alt="Móvil 3">
+                    <img src="./movil/WhatsApp Image 2026-05-21 at 6.50. PM.jpeg" class="gallery-img" alt="Móvil 4">
+                    <img src="./movil/WhatsApp Image 2026-05-21 at 7.3 PM.jpeg" class="gallery-img" alt="Móvil 5">
+                    <img src="./movil/WhatsApp Image 2026-05-21 at 7.43.02 PM.jpeg" class="gallery-img" alt="Móvil 6">
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Navegación inferior (Indicadores) -->
+        <div class="slide-indicator" id="indicators">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <!-- Controles flotantes -->
+        <div class="controls">
+            <button class="btn-control" id="prevBtn" title="Anterior (Flecha Izquierda)">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <button class="btn-control" id="nextBtn" title="Siguiente (Flecha Derecha)">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentSlide = 0;
+
+            function goToSlide(index) {
+                if (index < 0) index = 0;
+                if (index >= slides.length) index = slides.length - 1;
+                
+                slides[currentSlide].classList.remove('active');
+                dots[currentSlide].classList.remove('active');
+                
+                currentSlide = index;
+                
+                slides[currentSlide].classList.add('active');
+                dots[currentSlide].classList.add('active');
+            }
+
+            prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+            nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    goToSlide(currentSlide - 1);
+                } else if (e.key === 'ArrowRight' || e.key === ' ') {
+                    goToSlide(currentSlide + 1);
+                }
+            });
+
+            // Dots clickable
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => goToSlide(index));
+            });
+
+            // Mobile phone gallery rotation
+            const galleryImgs = document.querySelectorAll('.gallery-img');
+            let currentImg = 0;
+            
+            setInterval(() => {
+                galleryImgs[currentImg].classList.remove('active');
+                currentImg = (currentImg + 1) % galleryImgs.length;
+                galleryImgs[currentImg].classList.add('active');
+            }, 3000); // Change image every 3 seconds
+        });
+    </script>
+</body>
+</html>
