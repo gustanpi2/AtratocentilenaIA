@@ -1,7 +1,8 @@
   "use client";
 
   import React, { useCallback, useEffect, useRef, useState } from "react";
-  import { GoogleMap, Marker, useJsApiLoader  } from "@react-google-maps/api";
+  import { GoogleMap, Marker } from "@react-google-maps/api";
+  import { useGoogleMaps } from "../../context/GoogleMapsProvider";
   import {
     Search, Layers, ZoomIn, ZoomOut, Compass, ChevronRight,
     Trash2, MapPin, Activity, Droplets, Wind, Waves, X, Menu,
@@ -24,7 +25,6 @@
 
   // ─── Constants ────────────────────────────────────────────────────────────────
   const MAP_CENTER = { lat: 5.69188, lng: -76.65835 };
-  const LIBRARIES: [] = [];
 
   const DARK_MAP_STYLES: google.maps.MapTypeStyle[] = [
     { elementType: "geometry", stylers: [{ color: "#0f1923" }] },
@@ -126,11 +126,8 @@
     const [isMobile, setIsMobile] = useState(false);
     const mapRef = useRef<google.maps.Map | null>(null);
 
-    // ── Google Maps ──
-    const { isLoaded, loadError } = useJsApiLoader({
-      googleMapsApiKey: import.meta.env.VITE_API_KEYS_MAPS,
-      libraries: LIBRARIES,
-    });
+    // ── Google Maps (shared loader via context) ──
+    const { isLoaded, loadError } = useGoogleMaps();
 
     // ── Responsive detection ──
     useEffect(() => {

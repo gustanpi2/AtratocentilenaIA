@@ -12,6 +12,7 @@ import {
   MdSensors,
   MdWarning,
   MdScience,
+  MdMenuBook,
 } from "react-icons/md";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
@@ -63,6 +64,7 @@ const AppSidebar: React.FC = () => {
           name: "Información",
           subItems: [
             { name: "Marco Legal y Guías", path: "/", icon: <MdDescription /> },
+            { name: "Documentación", path: "/documentacion", icon: <MdMenuBook />, new: true },
           ],
         },
         {
@@ -73,6 +75,11 @@ const AppSidebar: React.FC = () => {
             { name: "Estaciones", path: "/stations", icon: <MdLocationOn /> },
             { name: "Sensores", path: "/sensors", icon: <MdSensors /> },
           ],
+        },
+        {
+          icon: <MdWarning className="text-red-500" />,
+          name: "Centro de Crisis",
+          subItems: [{ name: "Panel de Crisis", path: "/crisis", icon: <MdWarning /> }],
         },
         {
           icon: <MdScience className="text-cyan-500" />,
@@ -88,11 +95,6 @@ const AppSidebar: React.FC = () => {
           icon: <MdScience className="text-lime-500" />,
           name: "Agente Centinela AI",
           subItems: [{ name: "Consola del Agente", path: "/agent", icon: <MdScience /> }],
-        },
-        {
-          icon: <MdWarning className="text-red-500" />,
-          name: "Centro de Crisis",
-          subItems: [{ name: "Panel de Crisis", path: "/crisis", icon: <MdWarning /> }],
         },
         {
           icon: <MdManageAccounts />,

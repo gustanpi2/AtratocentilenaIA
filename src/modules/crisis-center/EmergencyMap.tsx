@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { GoogleMap, OverlayView, Polyline, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, OverlayView, Polyline } from "@react-google-maps/api";
+import { useGoogleMaps } from "../../context/GoogleMapsProvider";
 import { useTheme } from "../../context/ThemeContext";
 import {
   STATIONS, MESH_NETWORK, applyOverride, getStationCoords,
@@ -58,9 +59,7 @@ export const EmergencyMap = ({ overrides: propOverrides }: EmergencyMapProps) =>
 
   const overrides = propOverrides ?? ctxOverrides;
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_API_KEYS_MAPS,
-  });
+  const { isLoaded } = useGoogleMaps();
 
   const onLoad = useCallback((m: google.maps.Map) => {
     mapRef.current = m;

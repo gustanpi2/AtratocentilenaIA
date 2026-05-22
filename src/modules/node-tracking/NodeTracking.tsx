@@ -21,7 +21,7 @@ export const NodeTracking = () => {
         description="Análisis técnico e histórico de variables ambientales por nodo de monitoreo — AtratoCentinela AI"
       />
 
-      <div className="max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 xl:px-6 space-y-8">
+      <div className="max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 xl:px-6 space-y-4">
         {/* Page header */}
         <div className="flex items-center justify-between">
           <div>

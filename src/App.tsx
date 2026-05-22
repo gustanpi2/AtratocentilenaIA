@@ -17,6 +17,7 @@ import NotFound from "./pages/OtherPage/NotFound";
 import { Monitoreo } from "./pages/Monitoring/Monitoreo";
 import Variables from "./pages/Variables/Variables";
 import Information from "./pages/Information";
+import Documentacion from "./pages/Documentacion";
 import Detalles from "./pages/Variables/Detalles";
 import Users from "./pages/Users/Users";
 import Visits from "./pages/Visits/Visits";
@@ -40,6 +41,7 @@ import BarChart from "./pages/Charts/BarChart";
 // Crisis Center
 import { CrisisCenter } from "./modules/crisis-center/CrisisCenter";
 import { StationProvider } from "./modules/crisis-center/StationContext";
+import { GoogleMapsProvider } from "./context/GoogleMapsProvider";
 import { AlertBanner } from "./modules/alerts/AlertBanner";
 import { Chatbot } from "./modules/chatbot/Chatbot";
 import AgentPage from "./pages/Agent/AgentPage";
@@ -106,6 +108,7 @@ export default function App() {
       <AgentProvider>
         <Chatbot />
         <StationProvider>
+        <GoogleMapsProvider>
         <Routes>
         {/* Rutas con layout principal */}
         <Route element={<AppLayout />}>
@@ -121,6 +124,7 @@ export default function App() {
           <Route path="/monitoring/:id" element={<Monitoreo />} />
           <Route path="/monitoring/variables/:id" element={<Variables />} />
           <Route path="/monitoring/variables/detalles/:codigo/:id" element={<Detalles />} />
+          <Route path="/documentacion" element={<Documentacion />} />
           <Route path="/forgot-password" element={<ChangePassword />} />
           {/* Privadas (solo si está autenticado) */}
           {isAuthenticated && (
@@ -156,6 +160,7 @@ export default function App() {
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </GoogleMapsProvider>
       </StationProvider>
       </AgentProvider>
     </Router>

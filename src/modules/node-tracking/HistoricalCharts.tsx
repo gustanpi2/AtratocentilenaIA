@@ -233,7 +233,7 @@ export const HistoricalCharts = ({ filter }: HistoricalChartsProps) => {
         </div>
       </div>
       <div className="p-6">
-        <div className="h-[480px]">
+        <div className="h-[320px]">
           <Line data={config} options={options} />
         </div>
       </div>
