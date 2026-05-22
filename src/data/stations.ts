@@ -58,13 +58,31 @@ export interface StationData {
 }
 
 // ─── SIMULATION CONTROL ──────────────────────────────────────────
-// Set to true to periodically toggle some stations between
-// online/offline/autonomous for demo purposes.
+// Controls the demo simulation that periodically toggles station
+// states (online/offline/autonomous/critical) for demonstration.
 //
-// To disable: set to false
+// CONTROL DE VELOCIDAD DE SIMULACION:
+//   SIMULATION_INTERVAL_MS = tiempo entre cambios (ms)
+//   Cuanto mayor, mas lenta y realista la simulacion.
+//
+// CONTROL DE PROBABILIDAD DE FALLAS:
+//   CRITICAL_PROBABILITY  = probabilidad (0-1) de que un cambio
+//                           ponga una estacion en estado critico
+//   OFFLINE_PROBABILITY   = probabilidad (0-1) de que un cambio
+//                           ponga una estacion offline
+//
+// CONTROL DE DURACION DE ESTADOS:
+//   Los estados persisten hasta que la simulacion los cambia.
+//   Con intervalos largos (>60s) los estados duran minutos reales.
+//
+// To disable entirely: set ENABLE_CONNECTION_SIMULATION = false
 // ============================================================
 export const ENABLE_CONNECTION_SIMULATION = true;
-export const SIMULATION_INTERVAL_MS = 25000; // check every 25s
+export const SIMULATION_INTERVAL_MS = 60000;      // 60s entre ciclos (mas lento = mas realista)
+export const CRITICAL_PROBABILITY = 0.12;          // 12% de probabilidad de estado critico
+export const OFFLINE_PROBABILITY = 0.25;           // 25% de probabilidad de estado offline
+export const AUTONOMOUS_PROBABILITY = 0.20;        // 20% de probabilidad de modo autonomo
+export const CRITICAL_ALERT_COOLDOWN_MS = 120000;   // 2 min entre disparos de sirena
 
 // ─── STATIONS ────────────────────────────────────────────────────
 // Add new stations at the end of this array.
@@ -166,6 +184,24 @@ export const STATIONS: StationData[] = [
       { id: "s19", name: "Conductimetro CD-301", variable: "Conductividad", unit: "uS/cm", threshold: 400, critical: 600 },
     ],
   },
+  // Copia y pega esto justo después de la estación 'Lloro' (id: 5), antes del cierre del corchete ];
+  {
+    id: 6,
+    name: "Estacion Prueba",
+    node: "NHD-RSC-06",
+    lat: 7.4363,
+    lng: -77.1186,
+    type: "Hidrologica",
+    riskLevel: "normal",
+    connectionStatus: "online",
+    autonomousMode: false,
+    lastSeen: new Date().toISOString(),
+    meshRelay: null,
+    sensors: [
+      { id: "s20", name: "Limnigraph LG-204", variable: "Nivel", unit: "m", threshold: 5.0, critical: 6.5 },
+      { id: "s21", name: "Pluviometro PR-304", variable: "Precipitacion", unit: "mm", threshold: 80, critical: 150 },
+    ],
+  },
 ];
 
 // ─── HELPERS ──────────────────────────────────────────────────────
@@ -221,3 +257,84 @@ export const MESH_NETWORK: MeshLink[] = [
   { from: "NHD-BJY-02", to: "NHD-VDF-03" },
   { from: "NHD-QBD-01", to: "NHD-BJY-02" },
 ];
+
+// ─── OVERRIDE HELPERS (for simulation and dynamic display) ─────────
+
+export type StateOverride = {
+  connectionStatus?: StationConnection;
+  autonomousMode?: boolean;
+  riskLevel?: StationRisk;
+};
+
+export function applyOverride(base: StationData, override: StateOverride | undefined): StationData {
+  return override ? { ...base, ...override } : base;
+}
+
+// ─── SIMULATION STEP ─────────────────────────────────────────────
+// Returns a new override for a single station based on probability
+// controls. Called by StationContext at each SIMULATION_INTERVAL_MS.
+//
+// Probability logic:
+//   1. If station is already critical → recover to normal
+//   2. Roll dice: CRITICAL_PROBABILITY → set critical
+//   3. Roll dice: OFFLINE_PROBABILITY → set offline
+//   4. Roll dice: AUTONOMOUS_PROBABILITY → set autonomous from offline
+//   5. Otherwise → stay/return to online
+// ================================================================
+
+export function simulateStationState(s: StationData): StateOverride {
+  const r = Math.random();
+
+  // Critical stations recover
+  if (s.riskLevel === "critical") {
+    return { connectionStatus: "online", autonomousMode: false, riskLevel: "normal" };
+  }
+
+  // Autonomous stations recover to online
+  if (s.autonomousMode) {
+    return { connectionStatus: "online", autonomousMode: false, riskLevel: "normal" };
+  }
+
+  // Offline stations may become autonomous
+  if (s.connectionStatus === "offline") {
+    if (r < AUTONOMOUS_PROBABILITY) {
+      return { autonomousMode: true, connectionStatus: "offline", riskLevel: "warning" };
+    }
+    return { connectionStatus: "online", autonomousMode: false, riskLevel: "normal" };
+  }
+
+  // Online stations: roll for state changes
+  if (r < CRITICAL_PROBABILITY) {
+    return { connectionStatus: "online", autonomousMode: false, riskLevel: "critical" };
+  }
+  if (r < CRITICAL_PROBABILITY + OFFLINE_PROBABILITY) {
+    return { connectionStatus: "offline", autonomousMode: false, riskLevel: "warning" };
+  }
+  // Stay online
+  return { connectionStatus: "online", autonomousMode: false, riskLevel: "normal" };
+}
+
+export function getStationCoords(node: string) {
+  const s = STATIONS.find((st) => st.node === node);
+  return s ? { lat: s.lat, lng: s.lng } : null;
+}
+
+export function getDynamicStationSummary(overrides: Record<number, StateOverride>) {
+  const online = STATIONS.filter((s) => {
+    const e = applyOverride(s, overrides[s.id]);
+    return e.connectionStatus === "online" && !e.autonomousMode;
+  }).length;
+  const offline = STATIONS.filter((s) => {
+    const e = applyOverride(s, overrides[s.id]);
+    return e.connectionStatus === "offline" && !e.autonomousMode;
+  }).length;
+  const autonomous = STATIONS.filter((s) => {
+    const e = applyOverride(s, overrides[s.id]);
+    return e.autonomousMode;
+  }).length;
+  const critical = STATIONS.filter((s) => {
+    const e = applyOverride(s, overrides[s.id]);
+    return e.riskLevel === "critical";
+  }).length;
+  return { total: STATIONS.length, online, offline, autonomous, critical };
+}

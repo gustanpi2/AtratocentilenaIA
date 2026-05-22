@@ -1,36 +1,57 @@
-import { useMemo, useEffect, useRef } from "react";
-import { MOCK_PREDICTIONS } from "../../data/mockData";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface PredictionPoint {
-  hoursFromNow: number;
-  level: number;
-  confidence: number;
-}
-
-interface PredictionDataset {
-  station: string;
-  timestamp: string;
-  predictions: PredictionPoint[];
-}
-
-// ─── Mock historical data (last 12h before now) ──────────────────────────────
+import { useMemo, useEffect, useRef, useState } from "react";
+import { useStationContext, VARIABLE_OPTIONS, STATION_OPTIONS } from "../crisis-center/StationContext";
 
 const HISTORICAL_HOURS = 12;
 
-function generateHistorical(currentLevel: number): { hour: number; level: number }[] {
-  const points = [];
+// ─── Generate historical data ─────────────────────────────────
+
+function generateHistorical(currentLevel: number, volatility = 0.28): { hour: number; level: number }[] {
+  const points: { hour: number; level: number }[] = [];
   let level = currentLevel - 1.2;
   for (let h = -HISTORICAL_HOURS; h <= 0; h++) {
-    level += (Math.random() - 0.42) * 0.28;
-    level = Math.max(1.5, Math.min(8.5, level));
+    level += (Math.random() - 0.42) * volatility;
+    level = Math.max(0.5, Math.min(10, level));
     points.push({ hour: h, level: parseFloat(level.toFixed(2)) });
   }
   return points;
 }
 
-// ─── Confidence label ─────────────────────────────────────────────────────────
+// ─── Generate predictions ─────────────────────────────────────
+
+function generatePredictions(baseValue: number, trend: number): { hoursFromNow: number; level: number; confidence: number }[] {
+  const predictions: { hoursFromNow: number; level: number; confidence: number }[] = [];
+  for (let h = 1; h <= 6; h++) {
+    const noise = (Math.random() - 0.5) * 0.3;
+    const level = baseValue + trend * h + noise;
+    const confidence = Math.max(30, Math.round(90 - h * 7 - Math.random() * 5));
+    predictions.push({ hoursFromNow: h, level: parseFloat(level.toFixed(2)), confidence });
+  }
+  return predictions;
+}
+
+// ─── Chart colors per variable ────────────────────────────────
+
+const VAR_COLORS: Record<string, string> = {
+  Nivel:         "#2563eb",
+  Caudal:        "#0891b2",
+  pH:            "#7c3aed",
+  Turbiedad:     "#92400e",
+  Temperatura:   "#dc2626",
+  Precipitacion: "#0284c7",
+  Conductividad: "#d97706",
+};
+
+const VAR_UNITS: Record<string, string> = {
+  Nivel:         "m",
+  Caudal:        "m³/s",
+  pH:            "pH",
+  Turbiedad:     "NTU",
+  Temperatura:   "°C",
+  Precipitacion: "mm",
+  Conductividad: "µS/cm",
+};
+
+// ─── Confidence label ─────────────────────────────────────────
 
 function confidenceLabel(c: number) {
   if (c >= 80) return { text: "Alta", color: "text-green-600 dark:text-green-400" };
@@ -38,83 +59,106 @@ function confidenceLabel(c: number) {
   return { text: "Baja", color: "text-red-500 dark:text-red-400" };
 }
 
-// ─── Chart component ──────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────
 
 export const PredictionPanel = () => {
-  const data = useMemo(() => MOCK_PREDICTIONS[0] as PredictionDataset, []);
+  const { effectiveStations } = useStationContext();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<any>(null);
 
+  const [selectedStationId, setSelectedStationId] = useState(STATION_OPTIONS[0]?.id ?? 0);
+  const [selectedVar, setSelectedVar] = useState(VARIABLE_OPTIONS[0]?.id ?? "Nivel");
+
+  const selectedStation = useMemo(
+    () => effectiveStations.find((s) => s.id === selectedStationId) ?? effectiveStations[0],
+    [selectedStationId, effectiveStations],
+  );
+
+  const varMeta = VARIABLE_OPTIONS.find((v) => v.id === selectedVar);
+  const unit = VAR_UNITS[selectedVar] ?? varMeta?.unit ?? "";
+  const color = VAR_COLORS[selectedVar] ?? "#3b82f6";
+
+  const sensor = selectedStation.sensors.find((s) => s.variable === selectedVar);
+  const criticalThreshold = sensor?.critical ?? varMeta?.critical ?? 5;
+  const warningThreshold = sensor?.threshold ?? varMeta?.threshold ?? 4;
+
+  const baseValue = useMemo(
+    () => (sensor?.threshold ?? 4) * (0.6 + Math.random() * 0.5),
+    [selectedStationId, selectedVar],
+  );
+
+  const trend = useMemo(() => (Math.random() - 0.35) * 0.3, [selectedStationId, selectedVar]);
+
+  const data = useMemo(
+    () => ({
+      station: selectedStation.name,
+      timestamp: new Date().toISOString(),
+      predictions: generatePredictions(baseValue, trend),
+    }),
+    [selectedStation.name, baseValue, trend],
+  );
+
   const historical = useMemo(
-    () => generateHistorical(data.predictions[0]?.level ?? 4.2),
-    [data]
+    () => generateHistorical(data.predictions[0]?.level ?? 4),
+    [data],
   );
 
-  const criticalThreshold = 5.0;
-  const warningThreshold = 4.0;
-
-  // Final predicted level & trend
-  const lastPrediction = data.predictions[data.predictions.length - 1];
-  const firstPrediction = data.predictions[0];
-  const peakLevel = Math.max(...data.predictions.map((p) => p.level));
-  const avgConfidence = Math.round(
-    data.predictions.reduce((s, p) => s + p.confidence, 0) / data.predictions.length
-  );
-  const cl = confidenceLabel(avgConfidence);
-
-  const isCritical = peakLevel >= criticalThreshold;
-  const isWarning = peakLevel >= warningThreshold && peakLevel < criticalThreshold;
-
-  // Build chart labels: historical hours + forecast hours
-  const allHours = [
+  // Chart data
+  const allLabels = useMemo(() => [
     ...historical.map((h) => h.hour),
     ...data.predictions.map((p) => p.hoursFromNow),
-  ];
-  const allLabels = allHours.map((h) =>
-    h < 0 ? `${h}h` : h === 0 ? "Ahora" : `+${h}h`
-  );
+  ], [historical, data]);
 
-  // Historical data series (null for forecast positions)
-  const historicalSeries = [
+  const allLabelsFormatted = useMemo(() =>
+    allLabels.map((h) => (h < 0 ? `${h}h` : h === 0 ? "Ahora" : `+${h}h`)),
+  [allLabels]);
+
+  const historicalSeries = useMemo(() => [
     ...historical.map((h) => h.level),
     ...data.predictions.map(() => null),
-  ];
+  ], [historical, data]);
 
-  // Forecast series (null for historical positions)
-  const forecastSeries = [
+  const forecastSeries = useMemo(() => [
     ...historical.map((_, i) => (i === historical.length - 1 ? historical[historical.length - 1].level : null)),
     ...data.predictions.map((p) => p.level),
-  ];
+  ], [historical, data]);
 
-  // Confidence band (upper/lower)
-  const confidenceUpper = [
+  const confidenceUpper = useMemo(() => [
     ...historical.map(() => null),
     ...data.predictions.map((p) => {
       const margin = (1 - p.confidence / 100) * 1.8;
       return parseFloat((p.level + margin).toFixed(2));
     }),
-  ];
-  const confidenceLower = [
+  ], [data]);
+
+  const confidenceLower = useMemo(() => [
     ...historical.map(() => null),
     ...data.predictions.map((p) => {
       const margin = (1 - p.confidence / 100) * 1.8;
       return parseFloat(Math.max(0, p.level - margin).toFixed(2));
     }),
-  ];
+  ], [data]);
 
+  // Stats
+  const lastPrediction = data.predictions[data.predictions.length - 1];
+  const firstPrediction = data.predictions[0];
+  const peakLevel = Math.max(...data.predictions.map((p) => p.level));
+  const avgConfidence = Math.round(
+    data.predictions.reduce((s, p) => s + p.confidence, 0) / data.predictions.length,
+  );
+  const cl = confidenceLabel(avgConfidence);
+  const isCritical = peakLevel >= criticalThreshold;
+  const isWarning = peakLevel >= warningThreshold && peakLevel < criticalThreshold;
+
+  // Chart rendering
   useEffect(() => {
     if (!canvasRef.current) return;
-
-    // Dynamically load Chart.js
     const script = document.createElement("script");
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js";
     script.onload = () => {
       const Chart = (window as any).Chart;
       if (!Chart || !canvasRef.current) return;
-
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
+      if (chartRef.current) chartRef.current.destroy();
 
       const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
@@ -123,19 +167,17 @@ export const PredictionPanel = () => {
       chartRef.current = new Chart(canvasRef.current, {
         type: "line",
         data: {
-          labels: allLabels,
+          labels: allLabelsFormatted,
           datasets: [
-            // Confidence band upper (fill to lower)
             {
               label: "Confianza superior",
               data: confidenceUpper,
               borderWidth: 0,
               pointRadius: 0,
               fill: "+1",
-              backgroundColor: "rgba(59,130,246,0.10)",
+              backgroundColor: `${color}18`,
               tension: 0.4,
             },
-            // Confidence band lower
             {
               label: "Confianza inferior",
               data: confidenceLower,
@@ -145,11 +187,10 @@ export const PredictionPanel = () => {
               backgroundColor: "transparent",
               tension: 0.4,
             },
-            // Historical
             {
               label: "Histórico",
               data: historicalSeries,
-              borderColor: isDark ? "#60a5fa" : "#3b82f6",
+              borderColor: isDark ? "#94a3b8" : "#64748b",
               backgroundColor: "transparent",
               borderWidth: 2,
               pointRadius: 0,
@@ -157,13 +198,12 @@ export const PredictionPanel = () => {
               tension: 0.4,
               spanGaps: false,
             },
-            // Forecast
             {
               label: "Predicción IA",
               data: forecastSeries,
-              borderColor: isDark ? "#f59e0b" : "#d97706",
+              borderColor: color,
               backgroundColor: "transparent",
-              borderWidth: 2,
+              borderWidth: 2.5,
               borderDash: [5, 3],
               pointRadius: 0,
               pointHoverRadius: 4,
@@ -175,6 +215,7 @@ export const PredictionPanel = () => {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: { duration: 600 },
           interaction: { mode: "index", intersect: false },
           plugins: {
             legend: { display: false },
@@ -190,11 +231,10 @@ export const PredictionPanel = () => {
                   if (ctx.raw === null) return null;
                   const label = ctx.dataset.label;
                   if (label?.includes("Confianza")) return null;
-                  return `${label}: ${ctx.raw.toFixed(2)} m`;
+                  return `${label}: ${ctx.raw.toFixed(2)} ${unit}`;
                 },
               },
             },
-            annotation: undefined,
           },
           scales: {
             x: {
@@ -214,7 +254,7 @@ export const PredictionPanel = () => {
               ticks: {
                 color: textColor,
                 font: { size: 11, family: "ui-monospace, monospace" },
-                callback: (v: number) => `${v.toFixed(1)}m`,
+                callback: (v: number) => `${v.toFixed(1)}${unit}`,
               },
             },
           },
@@ -244,10 +284,9 @@ export const PredictionPanel = () => {
                 ctx.restore();
               };
 
-              drawLine(criticalThreshold, "#ef4444", `Crítico ${criticalThreshold}m`);
-              drawLine(warningThreshold, "#f59e0b", `Preventivo ${warningThreshold}m`);
+              drawLine(criticalThreshold, "#ef4444", `Crítico ${criticalThreshold}${unit}`);
+              drawLine(warningThreshold, "#f59e0b", `Preventivo ${warningThreshold}${unit}`);
 
-              // "Now" vertical line
               const nowIdx = historical.length;
               const xPx = scales.x.getPixelForValue(nowIdx);
               const { top, bottom } = chartArea;
@@ -269,26 +308,53 @@ export const PredictionPanel = () => {
         ],
       });
     };
-
     document.head.appendChild(script);
     return () => {
       if (chartRef.current) chartRef.current.destroy();
     };
-  }, []);
+  }, [selectedStationId, selectedVar, allLabelsFormatted, historicalSeries, forecastSeries, confidenceUpper, confidenceLower, unit, criticalThreshold, warningThreshold, peakLevel, color, historical.length]);
 
   return (
     <div className="space-y-4">
+      {/* Selectors */}
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="text-[9px] font-mono text-gray-400 uppercase tracking-wider mb-1 block">Estación</label>
+          <select
+            value={selectedStationId}
+            onChange={(e) => setSelectedStationId(Number(e.target.value))}
+            className="w-full text-xs font-mono bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 text-gray-700 dark:text-gray-300 outline-none focus:ring-2 focus:ring-lime-500/30"
+          >
+            {STATION_OPTIONS.map((s) => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="text-[9px] font-mono text-gray-400 uppercase tracking-wider mb-1 block">Variable</label>
+          <select
+            value={selectedVar}
+            onChange={(e) => setSelectedVar(e.target.value)}
+            className="w-full text-xs font-mono bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 text-gray-700 dark:text-gray-300 outline-none focus:ring-2 focus:ring-lime-500/30"
+          >
+            {VARIABLE_OPTIONS.map((v) => (
+              <option key={v.id} value={v.id}>{v.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {/* Station metadata */}
       <div className="flex items-center justify-between text-xs font-mono text-gray-400 dark:text-gray-500">
-        <span>Estación: {data.station}</span>
-        <span>Actualizado: {new Date(data.timestamp).toLocaleTimeString("es-CO")}</span>
+        <span>{selectedStation.name} — {selectedStation.node}</span>
+        <span>{new Date(data.timestamp).toLocaleTimeString("es-CO")}</span>
       </div>
 
       {/* Status indicators */}
       <div className="grid grid-cols-3 gap-3">
         <StatPill
-          label="Nivel pico previsto"
-          value={`${peakLevel.toFixed(2)} m`}
+          label={`${varMeta?.label ?? selectedVar} pico`}
+          value={`${peakLevel.toFixed(2)} ${unit}`}
           color={isCritical ? "red" : isWarning ? "amber" : "green"}
         />
         <StatPill
@@ -297,32 +363,32 @@ export const PredictionPanel = () => {
           colorClass={cl.color}
         />
         <StatPill
-          label="Tendencia 24h"
-          value={lastPrediction.level > firstPrediction.level ? "Ascenso" : "Descenso"}
-          color={lastPrediction.level > firstPrediction.level ? "red" : "green"}
+          label="Tendencia 6h"
+          value={trend > 0.05 ? "Ascenso" : trend < -0.05 ? "Descenso" : "Estable"}
+          color={trend > 0.05 ? "red" : "green"}
         />
       </div>
 
       {/* Chart */}
       <div className="relative" style={{ height: 280 }}>
-        <canvas ref={canvasRef} role="img" aria-label="Gráfica de predicción de nivel — AtratoCentinela AI" />
+        <canvas ref={canvasRef} role="img" aria-label={`Gráfica de predicción — ${selectedStation.name}`} />
       </div>
 
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-gray-700 pt-3">
-        <LegendItem color="#3b82f6" dashed={false} label="Histórico" />
-        <LegendItem color="#d97706" dashed label="Predicción IA" />
-        <LegendItem color="rgba(59,130,246,0.3)" dashed={false} label="Banda de confianza" />
-        <div className="ml-auto flex items-center gap-1">
+        <LegendItem color="#64748b" dashed={false} label="Histórico" />
+        <LegendItem color={color} dashed label="Predicción IA" />
+        <LegendItem color={`${color}40`} dashed={false} label="Banda de confianza" />
+        <div className="ml-auto flex items-center gap-2">
           <span className="w-3 h-px bg-red-400 inline-block" />
-          <span>Umbral crítico: {criticalThreshold}m</span>
+          <span>Crítico: {criticalThreshold}{unit}</span>
         </div>
       </div>
     </div>
   );
 };
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Sub-components ───────────────────────────────────────────
 
 function StatPill({
   label,
@@ -357,7 +423,6 @@ function LegendItem({ color, dashed, label }: { color: string; dashed: boolean; 
         style={{
           width: 20,
           height: 2,
-          background: color,
           display: "inline-block",
           borderTop: dashed ? `2px dashed ${color}` : undefined,
           background: dashed ? "transparent" : color,

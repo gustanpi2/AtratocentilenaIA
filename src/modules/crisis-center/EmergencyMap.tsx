@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { GoogleMap, Circle, Marker, Polyline, useJsApiLoader } from "@react-google-maps/api";
-import { useAlerts } from "../alerts/AlertProvider";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { GoogleMap, OverlayView, Polyline, useJsApiLoader } from "@react-google-maps/api";
 import { useTheme } from "../../context/ThemeContext";
 import {
-  STATIONS, MESH_NETWORK, ENABLE_CONNECTION_SIMULATION, SIMULATION_INTERVAL_MS,
-  StationData, StationConnection, StationRisk,
+  STATIONS, MESH_NETWORK, applyOverride, getStationCoords,
+  StateOverride, getDynamicStationSummary,
 } from "../../data/stations";
+import { useStationContext } from "./StationContext";
+import StationNode from "./StationNode";
+import "./station-nodes.css";
 
 const MAP_CENTER = { lat: 5.69188, lng: -76.65835 };
 
@@ -26,130 +28,83 @@ const LIGHT_STYLES: google.maps.MapTypeStyle[] = [
   { featureType: "poi", elementType: "geometry", stylers: [{ color: "#e8f0e8" }] },
 ];
 
-// ─── Station state overrides (for simulation) ──────────────────────
-
-type StateOverride = {
-  connectionStatus?: StationConnection;
-  autonomousMode?: boolean;
-  riskLevel?: StationRisk;
-};
-
-function cycleState(s: StationData): StateOverride {
-  if (s.autonomousMode) return { connectionStatus: "online", autonomousMode: false, riskLevel: "normal" };
-  if (s.connectionStatus === "offline") return { autonomousMode: true, connectionStatus: "offline", riskLevel: "warning" };
-  return { connectionStatus: "offline", autonomousMode: false, riskLevel: s.riskLevel };
+function interpolatePoint(
+  p1: { lat: number; lng: number },
+  p2: { lat: number; lng: number },
+  t: number,
+) {
+  return {
+    lat: p1.lat + (p2.lat - p1.lat) * t,
+    lng: p1.lng + (p2.lng - p1.lng) * t,
+  };
 }
 
-function getEffectiveStation(base: StationData, override: StateOverride | undefined): StationData {
-  return override ? { ...base, ...override } : base;
+interface EmergencyMapProps {
+  overrides?: Record<number, StateOverride>;
 }
 
-function getStationCoords(node: string) {
-  const s = STATIONS.find((st) => st.node === node);
-  return s ? { lat: s.lat, lng: s.lng } : null;
-}
-
-// ─── Marker icon per state ────────────────────────────────────────
-
-function getStateConfig(station: StationData) {
-  if (station.riskLevel === "critical") {
-    return { path: window.google.maps.SymbolPath.CIRCLE, scale: 11, fillColor: "#ef4444", fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 2.5 };
-  }
-  if (station.autonomousMode) {
-    return { path: "M 0,-12 L 12,0 L 0,12 L -12,0 Z", scale: 1, fillColor: "#a855f7", fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 2 };
-  }
-  if (station.connectionStatus === "offline") {
-    return { path: window.google.maps.SymbolPath.CIRCLE, scale: 7, fillColor: "#6b7280", fillOpacity: 0.6, strokeColor: "#4b5563", strokeWeight: 2 };
-  }
-  return { path: window.google.maps.SymbolPath.CIRCLE, scale: 9, fillColor: "#22c55e", fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 2 };
-}
-
-function getZoneConfig(riskLevel: StationRisk): { radius: number; fill: string; stroke: string; opacity: number } {
-  switch (riskLevel) {
-    case "critical": return { radius: 6000, fill: "#ef4444", stroke: "#991b1b", opacity: 0.15 };
-    case "warning":  return { radius: 4000, fill: "#f59e0b", stroke: "#92400e", opacity: 0.12 };
-    default:         return { radius: 2000, fill: "#22c55e", stroke: "#166534", opacity: 0.08 };
-  }
-}
-
-// ─── Component ────────────────────────────────────────────────────
-
-export const EmergencyMap = () => {
+export const EmergencyMap = ({ overrides: propOverrides }: EmergencyMapProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const { activeAlerts } = useAlerts();
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  const {
+    overrides: ctxOverrides,
+    highlightedStationId,
+    selectedStationId,
+    setHighlightedStationId,
+    focusStation,
+  } = useStationContext();
+
+  const overrides = propOverrides ?? ctxOverrides;
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_API_KEYS_MAPS,
   });
 
-  const [overrides, setOverrides] = useState<Record<number, StateOverride>>({});
-
-  // Connection simulation
-  useEffect(() => {
-    if (!ENABLE_CONNECTION_SIMULATION) return;
-    const interval = setInterval(() => {
-      setOverrides((prev) => {
-        const idx = Math.floor(Math.random() * STATIONS.length);
-        const st = STATIONS[idx];
-        const currentOverride = prev[idx];
-        const effective = getEffectiveStation(st, currentOverride);
-        const next = { ...prev, [idx]: cycleState(effective) };
-
-        // Also toggle a second station with shorter cycle
-        const idx2 = (idx + 3) % STATIONS.length;
-        const st2 = STATIONS[idx2];
-        const currentOverride2 = prev[idx2];
-        const effective2 = getEffectiveStation(st2, currentOverride2);
-        next[idx2] = cycleState(effective2);
-
-        return next;
-      });
-    }, SIMULATION_INTERVAL_MS);
-    return () => clearInterval(interval);
+  const onLoad = useCallback((m: google.maps.Map) => {
+    setMap(m);
+    mapRef.current = m;
   }, []);
 
-  const criticalAlerts = activeAlerts.filter((a) => a.type === "critical");
-
-  const onLoad = useCallback((m: google.maps.Map) => setMap(m), []);
-
+  // Pan to focused station
   useEffect(() => {
-    if (map && criticalAlerts.length > 0) {
-      const bounds = new google.maps.LatLngBounds();
-      STATIONS.forEach((s) => bounds.extend({ lat: s.lat, lng: s.lng }));
-      map.fitBounds(bounds);
+    if (selectedStationId !== null && mapRef.current) {
+      const st = STATIONS.find((s) => s.id === selectedStationId);
+      if (st) {
+        const eff = applyOverride(st, overrides[st.id]);
+        mapRef.current.panTo({ lat: eff.lat, lng: eff.lng });
+        mapRef.current.setZoom(14);
+      }
     }
-  }, [map, criticalAlerts]);
+  }, [selectedStationId, overrides]);
 
-  // Mesh line paths
   const meshPaths = useMemo(
     () =>
       MESH_NETWORK.map((link) => {
         const from = getStationCoords(link.from);
         const to = getStationCoords(link.to);
-        return from && to ? { from, to, key: `${link.from}-${link.to}` } : null;
-      }).filter(Boolean) as { from: { lat: number; lng: number }; to: { lat: number; lng: number }; key: string }[],
+        if (!from || !to) return null;
+        return {
+          from, to,
+          key: `${link.from}-${link.to}`,
+          midpoint: interpolatePoint(from, to, 0.5),
+          p25: interpolatePoint(from, to, 0.25),
+          p75: interpolatePoint(from, to, 0.75),
+        };
+      }).filter(Boolean) as {
+        from: { lat: number; lng: number };
+        to: { lat: number; lng: number };
+        key: string;
+        midpoint: { lat: number; lng: number };
+        p25: { lat: number; lng: number };
+        p75: { lat: number; lng: number };
+      }[],
     [],
   );
 
-  // Station stats for legend
-  const onlineCount = STATIONS.filter((s) => {
-    const e = getEffectiveStation(s, overrides[s.id]);
-    return e.connectionStatus === "online" && !e.autonomousMode;
-  }).length;
-  const offlineCount = STATIONS.filter((s) => {
-    const e = getEffectiveStation(s, overrides[s.id]);
-    return e.connectionStatus === "offline" && !e.autonomousMode;
-  }).length;
-  const autonomousCount = STATIONS.filter((s) => {
-    const e = getEffectiveStation(s, overrides[s.id]);
-    return e.autonomousMode;
-  }).length;
-  const criticalCount = STATIONS.filter((s) => {
-    const e = getEffectiveStation(s, overrides[s.id]);
-    return e.riskLevel === "critical";
-  }).length;
+  const summary = useMemo(() => getDynamicStationSummary(overrides), [overrides]);
 
   if (!isLoaded) {
     return (
@@ -175,28 +130,6 @@ export const EmergencyMap = () => {
         }}
         onLoad={onLoad}
       >
-        {/* Risk zone circles per station */}
-        {STATIONS.map((st) => {
-          const eff = getEffectiveStation(st, overrides[st.id]);
-          const zone = getZoneConfig(eff.riskLevel);
-          return (
-            <Circle
-              key={`zone-${st.id}`}
-              center={{ lat: st.lat, lng: st.lng }}
-              radius={zone.radius}
-              options={{
-                fillColor: zone.fill,
-                fillOpacity: zone.opacity,
-                strokeColor: zone.stroke,
-                strokeOpacity: 0.4,
-                strokeWeight: 1,
-                clickable: false,
-              }}
-            />
-          );
-        })}
-
-        {/* Mesh network polylines */}
         {meshPaths.map((mp) => (
           <Polyline
             key={mp.key}
@@ -204,7 +137,7 @@ export const EmergencyMap = () => {
             options={{
               strokeColor: "#a855f7",
               strokeOpacity: 0.25,
-              strokeWeight: 1.5,
+              strokeWeight: 2,
               strokeDasharray: "6 4",
               geodesic: true,
               clickable: false,
@@ -212,32 +145,60 @@ export const EmergencyMap = () => {
           />
         ))}
 
-        {/* Station markers */}
+        {meshPaths.map((mp) => (
+          <OverlayView
+            key={`dot-mid-${mp.key}`}
+            position={mp.midpoint}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+          >
+            <div
+              style={{
+                position: "relative",
+                transform: "translate(-50%, -50%)",
+                display: "flex",
+                gap: 8,
+              }}
+            >
+              <div className="sn-mesh-particle" />
+              <div className="sn-mesh-particle" />
+              <div className="sn-mesh-particle" />
+            </div>
+          </OverlayView>
+        ))}
+
         {STATIONS.map((st) => {
-          const eff = getEffectiveStation(st, overrides[st.id]);
+          const effective = applyOverride(st, overrides[st.id]);
+          const isHighlighted = highlightedStationId === st.id || selectedStationId === st.id;
           return (
-            <Marker
-              key={`marker-${st.id}`}
-              position={{ lat: eff.lat, lng: eff.lng }}
-              icon={getStateConfig(eff)}
-              title={`${eff.name} [${eff.node}] — ${eff.autonomousMode ? "Autónomo" : eff.connectionStatus === "offline" ? "Sin conexión" : eff.riskLevel === "critical" ? "Crítico" : "En línea"}`}
-            />
+            <OverlayView
+              key={`station-${st.id}`}
+              position={{ lat: effective.lat, lng: effective.lng }}
+              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            >
+              <div style={{ transform: "translate(-50%, -50%)" }}>
+                <StationNode
+                  station={effective}
+                  isDark={isDark}
+                  isHighlighted={isHighlighted}
+                  onHover={setHighlightedStationId}
+                  onClick={focusStation}
+                />
+              </div>
+            </OverlayView>
           );
         })}
       </GoogleMap>
 
-      {/* Top-left badge */}
       <div className="absolute top-3 left-3 z-10 bg-black/70 backdrop-blur-md text-white text-xs font-mono px-3 py-1.5 rounded-lg border border-white/10">
         Red de Estaciones — AtratoCentinela AI
       </div>
 
-      {/* Station status legend */}
-      <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[260px]">
+      <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[320px]">
         {[
-          { color: "#22c55e", label: "En línea", count: onlineCount },
-          { color: "#6b7280", label: "Sin conexión", count: offlineCount },
-          { color: "#a855f7", label: "Autónomo", count: autonomousCount },
-          { color: "#ef4444", label: "Crítico", count: criticalCount },
+          { color: "#22c55e", label: "En línea", count: summary.online },
+          { color: "#f97316", label: "Sin conexión", count: summary.offline },
+          { color: "#f59e0b", label: "Autónomo", count: summary.autonomous },
+          { color: "#ef4444", label: "Crítico", count: summary.critical },
         ].map((l) => (
           <span
             key={l.label}
@@ -249,6 +210,12 @@ export const EmergencyMap = () => {
           </span>
         ))}
       </div>
+
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-mono px-3 py-1.5 rounded-lg border border-white/10">
+        <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+        Red Mesh Activa
+      </div>
     </div>
   );
 };
+

@@ -16,6 +16,7 @@ import {
 } from "react-icons/md";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
+import { SidebarTacticalControls } from "./SidebarTacticalControls";
 
 type SubItem = {
   name: string;
@@ -261,6 +262,7 @@ const AppSidebar: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+                {nav.name === "Centro de Crisis" && <SidebarTacticalControls />}
               </div>
             )}
           </li>
@@ -317,7 +319,7 @@ const AppSidebar: React.FC = () => {
               className={`text-gray-400 dark:text-gray-500 uppercase font-bold text-[10px] mb-2 px-2 transition-opacity duration-300
               ${isSidebarOpen ? "opacity-100" : "opacity-0"}`}
             >
-              Más Acciones
+              
             </h2>
             {renderMenuItems(
               isAuthenticated

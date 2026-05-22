@@ -38,6 +38,7 @@ import BarChart from "./pages/Charts/BarChart";
 
 // Crisis Center
 import { CrisisCenter } from "./modules/crisis-center/CrisisCenter";
+import { StationProvider } from "./modules/crisis-center/StationContext";
 import { AlertBanner } from "./modules/alerts/AlertBanner";
 import { Chatbot } from "./modules/chatbot/Chatbot";
 import AgentPage from "./pages/Agent/AgentPage";
@@ -102,6 +103,7 @@ export default function App() {
       <AlertBanner />
       <AgentProvider>
         <Chatbot />
+        <StationProvider>
         <Routes>
         {/* Rutas con layout principal */}
         <Route element={<AppLayout />}>
@@ -151,6 +153,7 @@ export default function App() {
         {/* ❌ 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </StationProvider>
       </AgentProvider>
     </Router>
   );
