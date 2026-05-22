@@ -266,7 +266,7 @@ function AlertPole({ alertLevel }: { alertLevel: AlertLevel }) {
 /* ─── Lightning ────────────────────────────────────────────────── */
 function Lightning({ active }: { active: boolean }) {
   const flashRef = useRef<THREE.Mesh>(null!);
-  useFrame(({ clock }) => {
+  useFrame(() => {
     if (!flashRef.current || !active) return;
     if (Math.random() > 0.996) {
       (flashRef.current.material as THREE.MeshBasicMaterial).opacity = 1;

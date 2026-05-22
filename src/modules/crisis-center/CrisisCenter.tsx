@@ -81,12 +81,7 @@ const CrisisCenterInner = () => {
         description="Sistema de monitoreo, prevención y respuesta temprana — AtratoCentinela AI"
       />
 
-<<<<<<< HEAD
       <div className="max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 xl:px-6 space-y-6">
-        {/* Header */}
-=======
-      <div className="max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 xl:px-6 space-y-8">
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
         <CrisisHeader />
 
         {/* Critical indicators */}
@@ -120,7 +115,7 @@ const CrisisCenterInner = () => {
                     ${isActive ? "ring-2 ring-offset-1" : ""}
                     bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700
                   `}
-                  style={isActive ? { ringColor: cfg.color } : undefined}
+                  style={isActive ? { boxShadow: `0 0 0 2px ${cfg.color}` } : undefined}
                 >
                   <span
                     className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -176,7 +171,7 @@ const CrisisCenterInner = () => {
           )}
         </section>
 
-        {/* Map + Side info */}
+        {/* ── ROW 1: Map (2/3) + RiskGauge (1/3) ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
@@ -185,63 +180,32 @@ const CrisisCenterInner = () => {
                 Mapa de riesgo — AtratoCentinela AI
               </h2>
             </div>
-<<<<<<< HEAD
-            <div className="h-[500px] lg:h-[640px]">
-=======
-            <div className="h-[500px] lg:h-[560px]">
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
+            <div className="h-[400px] lg:h-[560px]">
               <EmergencyMap />
             </div>
           </div>
 
-<<<<<<< HEAD
-          <div className="flex flex-col gap-6 h-[500px] lg:h-[640px]">
-            {/* Risk gauge */}
-            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex-1">
-=======
-          <div className="space-y-6">
-            {/* Dynamic risk gauge */}
-            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
-              <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  Riesgo de Inundación
-                </h3>
+          <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm h-[400px] lg:h-[560px] flex flex-col">
+            <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 shrink-0">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Riesgo de Inundación
+              </h3>
+            </div>
+            <div className="flex-1 p-6 flex flex-col items-center justify-center overflow-y-auto">
+              <RiskGauge value={riskIndex} label="Riesgo General" size="lg" />
+              <div className="mt-3 w-full space-y-1">
+                {riskBreakdown.map((factor, i) => (
+                  <p key={i} className="text-[10px] font-mono text-gray-400 dark:text-gray-500 text-center leading-relaxed">
+                    {factor}
+                  </p>
+                ))}
               </div>
-<<<<<<< HEAD
-              <div className="p-6 flex items-center justify-center h-[calc(100%-53px)]">
-                <RiskGauge value={72} label="Riesgo General" size="lg" />
-=======
-              <div className="p-6 flex flex-col items-center">
-                <RiskGauge value={riskIndex} label="Riesgo General" size="lg" />
-                {/* Risk breakdown */}
-                <div className="mt-3 w-full space-y-1">
-                  {riskBreakdown.map((factor, i) => (
-                    <p key={i} className="text-[10px] font-mono text-gray-400 dark:text-gray-500 text-center leading-relaxed">
-                      {factor}
-                    </p>
-                  ))}
-                </div>
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
-              </div>
-            </section>
-
-            {/* AI Prediction */}
-            <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex-1">
-              <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  Predicción IA
-                </h3>
-              </div>
-              <div className="p-5 h-[calc(100%-53px)]">
-                <PredictionPanel />
-              </div>
-            </section>
-          </div>
+            </div>
+          </section>
         </div>
 
-        {/* Alert Timeline + Broadcast */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* ── ROW 2: Timeline (1/2) + Prediction IA (1/2) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300">
@@ -254,16 +218,28 @@ const CrisisCenterInner = () => {
           </section>
 
           <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                Comunicaciones de Emergencia
+            <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Predicción IA
               </h3>
             </div>
-            <div className="p-4">
-              <EmergencyBroadcast />
+            <div className="p-5">
+              <PredictionPanel />
             </div>
           </section>
         </div>
+
+        {/* ── ROW 3: Emergency Broadcast (full width) ── */}
+        <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              Comunicaciones de Emergencia
+            </h3>
+          </div>
+          <div className="p-4">
+            <EmergencyBroadcast />
+          </div>
+        </section>
 
       </div>
     </>

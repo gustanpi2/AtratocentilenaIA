@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { NODES, type NodeInfo } from "../../data/mockData";
+import { NODES } from "../../data/mockData";
 
 interface NodeInfoCardProps {
   nodeId: string;

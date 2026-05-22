@@ -3,7 +3,7 @@ import { useStationContext } from "../modules/crisis-center/StationContext";
 import { STATIONS, StateOverride } from "../data/stations";
 
 export const SidebarTacticalControls = () => {
-  const { overrides, setOverrides, effectiveStations, addBroadcastEntry } = useStationContext();
+  const { setOverrides, effectiveStations, addBroadcastEntry } = useStationContext();
   const [selectedId, setSelectedId] = useState(STATIONS[0].id);
 
   const station = effectiveStations.find((s) => s.id === selectedId);

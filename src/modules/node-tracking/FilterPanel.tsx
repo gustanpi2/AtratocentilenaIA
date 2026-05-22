@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { NODES, VARIABLES, type NodeInfo, type VariableDef } from "../../data/mockData";
+import { NODES, VARIABLES } from "../../data/mockData";
 
 export type TimeRange = "24h" | "7d" | "30d" | "1y" | "custom";
 

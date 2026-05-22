@@ -182,7 +182,6 @@
       const match = STATIONS.find((s) => s.name.toLowerCase() === nombre.toLowerCase());
       if (!match) return null;
 
-      const isOnline = match.connectionStatus === "online" && !match.autonomousMode;
       const isOffline = match.connectionStatus === "offline" && !match.autonomousMode;
       const isAutonomous = match.autonomousMode;
       const isCritical = match.riskLevel === "critical";

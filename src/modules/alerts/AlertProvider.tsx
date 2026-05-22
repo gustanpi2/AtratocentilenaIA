@@ -165,7 +165,7 @@ const RECOMMENDATION_MAP: Record<string, string> = {
 const alertCooldowns: Record<string, number> = {};
 const COOLDOWN_MS = 12 * 60 * 1000; // 12 minutes per variable per station
 
-function shouldEmitAlert(stationName: string, variable: string, severity: AlertSeverity): boolean {
+function shouldEmitAlert(stationName: string, variable: string, _severity: AlertSeverity): boolean {
   const key = `${stationName}_${variable}`;
   const last = alertCooldowns[key] ?? 0;
   if (Date.now() - last < COOLDOWN_MS) return false;
@@ -282,7 +282,7 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (isDemo) {
-      dispatch({ type: "LOAD_MOCK", payload: MOCK_ALERTS });
+      dispatch({ type: "LOAD_MOCK", payload: MOCK_ALERTS as Alert[] });
 
       simInterval.current = setInterval(() => {
         if (state.alertMode !== "ai") return;

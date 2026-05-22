@@ -5,7 +5,7 @@ import {
 import { useAlerts, type AlertMode } from "../alerts/AlertProvider";
 import {
   queryAgent, checkAgentHealth, evaluateAlert,
-  createConversation, listConversations, getConversation,
+  listConversations, getConversation,
   deleteConversation,
 } from "../../service/agentService";
 

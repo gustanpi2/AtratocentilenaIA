@@ -38,6 +38,7 @@ export interface StationContextValue {
   focusStation: (id: number) => void;
   setOverrides: React.Dispatch<React.SetStateAction<Record<number, StateOverride>>>;
   broadcastLog: string[];
+  setBroadcastLog: React.Dispatch<React.SetStateAction<string[]>>;
   addBroadcastEntry: (entry: string) => void;
 }
 
@@ -329,7 +330,7 @@ export const StationProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (maxValue === -Infinity) {
-        maxValue = generateMetricValue(meta.threshold, meta.critical, "normal", stableSeed, meta.stable);
+        maxValue = generateMetricValue(meta.threshold, meta.critical, "normal", stableSeed, meta.stable, meta.criticalAllowed);
         bestStation = STATIONS[0];
       }
 
@@ -391,6 +392,7 @@ export const StationProvider: React.FC<{ children: React.ReactNode }> = ({ child
     focusStation: focusStation ?? (() => {}),
     setOverrides: setOverrides ?? (() => {}),
     broadcastLog: broadcastLog ?? [],
+    setBroadcastLog: setBroadcastLog ?? (() => {}),
     addBroadcastEntry: addBroadcastEntry ?? (() => {}),
   };
 

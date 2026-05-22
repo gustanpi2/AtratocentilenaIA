@@ -4,8 +4,8 @@ import { STATIONS, StateOverride } from "../../data/stations";
 
 export const TacticalPanel = () => {
   const {
-    overrides, setOverrides, effectiveStations,
-    addBroadcastEntry, broadcastLog,
+    setOverrides, effectiveStations,
+    addBroadcastEntry, broadcastLog, setBroadcastLog,
   } = useStationContext();
 
   const [selectedStationId, setSelectedStationId] = useState(STATIONS[0].id);

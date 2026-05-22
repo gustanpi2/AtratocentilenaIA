@@ -78,13 +78,13 @@ export const HistoricalCharts = ({ filter }: HistoricalChartsProps) => {
         labels: {
           usePointStyle: true,
           padding: 24,
-          font: { family: "'Outfit', sans-serif", size: 13, weight: "600" },
+          font: { family: "'Outfit', sans-serif", size: 13, weight: "bold" },
           color: "#6b7280",
         },
       },
       tooltip: {
         backgroundColor: "rgba(255,255,255,0.97)",
-        titleFont: { family: "'Outfit', sans-serif", size: 13, weight: "600" },
+        titleFont: { family: "'Outfit', sans-serif", size: 13, weight: "bold" },
         titleColor: "#111827",
         bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
         bodyColor: "#374151",
@@ -128,7 +128,7 @@ export const HistoricalCharts = ({ filter }: HistoricalChartsProps) => {
         title: {
           display: true,
           text: variable?.unit ?? "",
-          font: { family: "'Outfit', sans-serif", size: 12, weight: "600" },
+          font: { family: "'Outfit', sans-serif", size: 12, weight: "bold" },
           color: "#6b7280",
         },
       },

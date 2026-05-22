@@ -4,7 +4,7 @@ import {
   ENABLE_CONNECTION_SIMULATION,
   SIMULATION_INTERVAL_MS,
   StateOverride,
-  cycleState,
+  simulateStationState,
   applyOverride,
 } from "../../data/stations";
 
@@ -23,13 +23,13 @@ export function useStationOverrides() {
         const idx1 = Math.floor(Math.random() * STATIONS.length);
         const st1 = STATIONS[idx1];
         const eff1 = applyOverride(st1, prev[idx1]);
-        next[idx1] = cycleState(eff1);
+        next[idx1] = simulateStationState(eff1);
 
         // Toggle station 2 (offset by 3)
         const idx2 = (idx1 + 3) % STATIONS.length;
         const st2 = STATIONS[idx2];
         const eff2 = applyOverride(st2, prev[idx2]);
-        next[idx2] = cycleState(eff2);
+        next[idx2] = simulateStationState(eff2);
 
         return next;
       });

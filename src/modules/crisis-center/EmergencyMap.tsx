@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { GoogleMap, OverlayView, Polyline, useJsApiLoader } from "@react-google-maps/api";
 import { useTheme } from "../../context/ThemeContext";
 import {
@@ -46,7 +46,6 @@ interface EmergencyMapProps {
 export const EmergencyMap = ({ overrides: propOverrides }: EmergencyMapProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
 
   const {
@@ -64,7 +63,6 @@ export const EmergencyMap = ({ overrides: propOverrides }: EmergencyMapProps) =>
   });
 
   const onLoad = useCallback((m: google.maps.Map) => {
-    setMap(m);
     mapRef.current = m;
   }, []);
 
@@ -138,10 +136,9 @@ export const EmergencyMap = ({ overrides: propOverrides }: EmergencyMapProps) =>
               strokeColor: "#a855f7",
               strokeOpacity: 0.25,
               strokeWeight: 2,
-              strokeDasharray: "6 4",
               geodesic: true,
               clickable: false,
-            }}
+            } as google.maps.PolylineOptions}
           />
         ))}
 

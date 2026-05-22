@@ -7,7 +7,7 @@ export function AgentChatPanel() {
     messages, sendMessage, isProcessing, isConnected,
     agentMode, setAgentMode,
   } = useAgent();
-  const { criticalAlerts, activeAlerts } = useAlerts();
+  const { criticalAlerts } = useAlerts();
 
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);

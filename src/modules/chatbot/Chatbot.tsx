@@ -1,35 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { ChatbotMessage } from "./ChatbotMessage";
 import { ChatbotInput } from "./ChatbotInput";
-<<<<<<< HEAD
-import { MOCK_CHATBOT_RESPONSES } from "../../data/mockData";
-import { FaRobot } from "react-icons/fa";
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
-
-const WELCOME: Message = {
-  id: "welcome",
-  text: "¡Hola! Soy el asistente inteligente del Sistema AtratoCentinela AI.\n\nPuedo ayudarte con:\n• Nivel del río y condiciones actuales\n• Riesgo de inundación\n• Alertas activas\n• Datos de estaciones\n• Recomendaciones de seguridad\n\n¿Qué deseas saber?",
-  isUser: false,
-  timestamp: new Date(),
-};
-
-const findResponse = (input: string): string => {
-  const lower = input.toLowerCase();
-  for (const [key, response] of Object.entries(MOCK_CHATBOT_RESPONSES)) {
-    if (lower.includes(key)) return response;
-  }
-  return MOCK_CHATBOT_RESPONSES.default;
-};
-=======
 import { useAgent } from "../agent/AgentContext";
 import { useAlerts } from "../alerts/AlertProvider";
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
 
 export const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,13 +25,9 @@ export const Chatbot = () => {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-lime-500 text-white">
             <div className="flex items-center gap-2.5">
-<<<<<<< HEAD
-              <FaRobot className="text-xl" />
-=======
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">
                 <path d="M12 2C6.48 2 2 6.48 2 12c0 1.88.52 3.65 1.42 5.16L2 22l4.84-1.42A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" strokeWidth="1.5" fill="currentColor" fillOpacity="0.3" />
               </svg>
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
               <div>
                 <p className="font-bold text-sm">Agente AtratoCentinela AI</p>
                 <p className="text-[10px] opacity-80 font-mono">

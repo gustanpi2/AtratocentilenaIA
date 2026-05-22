@@ -92,9 +92,7 @@ export const Meteorológico = ({ estacion }: Props) => {
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px rgba(34,197,94,0.6)", animation: "met-blink 2s ease-in-out infinite" }} />
               Estación #{idEstacion}
             </span>
-            <span className="met-station-chip" style={{ background: "#eff6ff", borderColor: "rgba(59,130,246,0.2)", color: "#3b82f6" }}
-              /* @ts-ignore */
-              className="dark:bg-blue-950/30 dark:border-blue-900/40 dark:text-blue-400">
+            <span className="met-station-chip dark:bg-blue-950/30 dark:border-blue-900/40 dark:text-blue-400" style={{ background: "#eff6ff", borderColor: "rgba(59,130,246,0.2)", color: "#3b82f6" }}>
               {estacion.tipo_estacion_nombre}
             </span>
           </div>

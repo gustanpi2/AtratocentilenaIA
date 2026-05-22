@@ -114,11 +114,8 @@ export default function App() {
           <Route path="/inform" element={<Home />} />
           <Route path="/inform/:estacion" element={<Home />} />
           <Route path="/node-tracking" element={<NodeTracking />} />
-<<<<<<< HEAD
-          <Route path="/simulacion" element={<Simulacion />} />
-=======
           <Route path="/agent" element={<AgentPage />} />
->>>>>>> fd495f6ee09361b0c2906455c6415216eef8ece0
+          <Route path="/simulacion" element={<Simulacion />} />
           <Route path="/monitoring/:id" element={<Monitoreo />} />
           <Route path="/monitoring/variables/:id" element={<Variables />} />
           <Route path="/monitoring/variables/detalles/:codigo/:id" element={<Detalles />} />

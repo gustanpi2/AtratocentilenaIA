@@ -140,8 +140,6 @@ export const PredictionPanel = () => {
   ], [data]);
 
   // Stats
-  const lastPrediction = data.predictions[data.predictions.length - 1];
-  const firstPrediction = data.predictions[0];
   const peakLevel = Math.max(...data.predictions.map((p) => p.level));
   const avgConfidence = Math.round(
     data.predictions.reduce((s, p) => s + p.confidence, 0) / data.predictions.length,
